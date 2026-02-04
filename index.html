@@ -122,6 +122,8 @@ body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#0a0a0f;col
         <div class="lt on" style="--c:#ef4444;--bg:rgba(239,68,68,.06);" data-t="drain" onclick="tog(this)"><div class="dot" style="background:#ef4444;"></div><div class="nm">🛣️ 배수성 (경사+폭우+사고)</div><div class="ct">9</div></div>
         <div class="lt on" style="--c:#a855f7;--bg:rgba(168,85,247,.06);" data-t="quiet" onclick="tog(this)"><div class="dot" style="background:#a855f7;"></div><div class="nm">🔇 저소음 (주거+교통량)</div><div class="ct">8</div></div>
         <div class="lt on" style="--c:#06b6d4;--bg:rgba(6,182,212,.06);" data-t="perm" onclick="tog(this)"><div class="dot" style="background:#06b6d4;"></div><div class="nm">💧 투수성 (침수+불투수면)</div><div class="ct">6</div></div>
+        <div class="lt on" style="--c:#facc15;--bg:rgba(250,204,21,.06);" data-t="cctv" onclick="togCCTV(this)"><div class="dot" style="background:#facc15;"></div><div class="nm">📹 ITS CCTV 영상</div><div class="ct" id="cctvCnt">0</div></div>
+        <div class="lt on" style="--c:#fb923c;--bg:rgba(251,146,60,.06);" data-t="safety" onclick="togSafety(this)"><div class="dot" style="background:#fb923c;"></div><div class="nm">🔧 도로안전시설 점검</div><div class="ct" id="safetyCnt">0</div></div>
     </div>
     <div class="sec">
         <div class="stt">🎯 종합 분석</div>
@@ -139,6 +141,8 @@ body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#0a0a0f;col
         <div class="ar"><div class="ard" id="d-wx" style="background:#666;"></div><div class="arn">기상청 ASOS</div><div class="ars" id="s-wx" style="color:#666;">확인중</div></div>
         <div class="ar"><div class="ard" id="d-ta" style="background:#666;"></div><div class="arn">TAAS 사고이력</div><div class="ars" id="s-ta" style="color:#666;">확인중</div></div>
         <div class="ar"><div class="ard" id="d-dm" style="background:#666;"></div><div class="arn">국토정보 DEM</div><div class="ars" id="s-dm" style="color:#666;">확인중</div></div>
+        <div class="ar"><div class="ard" id="d-cc" style="background:#666;"></div><div class="arn">ITS CCTV 영상</div><div class="ars" id="s-cc" style="color:#666;">확인중</div></div>
+        <div class="ar"><div class="ard" id="d-sf" style="background:#fb923c;"></div><div class="arn">안전시설 점검</div><div class="ars" id="s-sf" style="color:#fb923c;">샘플</div></div>
     </div>
     <div class="sec">
         <div class="stt">🏆 우선순위 TOP 10</div>
@@ -171,6 +175,12 @@ var TI={drain:'🛣️',quiet:'🔇',perm:'💧'};
 var vis={drain:1,quiet:1,perm:1};
 var AI_MODE='checking'; // 'live' or 'offline'
 
+// ★ API 서버 주소 — Render 배포 URL로 설정
+// 같은 서버(Render)에서 열면 '' (빈문자), GitHub Pages에서 열면 Render 주소
+var API_BASE = location.hostname.includes('github.io') 
+    ? 'https://pavement-platform-1.onrender.com' 
+    : '';
+
 // ===== 23개 구간 데이터 =====
 var D=[
 {id:1,n:'남산 순환로',la:37.5512,lo:126.9882,t:'drain',sl:6.2,rn:42,ac:8,sc:95,tr:35000,im:60,fl:1,cm:3,ds:'급경사 6.2% + 연 42회 폭우 + 우천사고 8건/년'},
@@ -201,19 +211,24 @@ D.sort(function(a,b){return b.sc-a.sc;});
 
 // ===== 백엔드 상태 확인 =====
 function checkStatus(){
-    fetch('/api/status').then(function(r){return r.json();}).then(function(d){
+    fetch(API_BASE+'/api/status').then(function(r){return r.json();}).then(function(d){
         setDot('ai',d.claude_ai==='connected'?'live':'off');
         setDot('wx',d.weather==='connected'?'live':(d.weather==='sample'?'sample':'off'));
         setDot('ta',d.taas==='connected'?'live':(d.taas==='sample'?'sample':'off'));
         setDot('dm',d.dem==='connected'?'live':(d.dem==='sample'?'sample':'off'));
+        setDot('cc',d.cctv==='connected'?'live':(d.cctv==='sample'?'sample':'off'));
         AI_MODE = d.claude_ai==='connected' ? 'live' : 'offline';
         var b=document.getElementById('aiBadge');
         if(AI_MODE==='live'){b.className='badge b-g';b.textContent='AI 실시간';}
         else{b.className='badge b-y';b.textContent='AI 오프라인';}
+        loadCCTV();
+        loadSafety();
     }).catch(function(){
         AI_MODE='offline';
-        setDot('ai','off');setDot('wx','off');setDot('ta','off');setDot('dm','off');
+        setDot('ai','off');setDot('wx','off');setDot('ta','off');setDot('dm','off');setDot('cc','off');
         var b=document.getElementById('aiBadge');b.className='badge b-y';b.textContent='AI 오프라인';
+        loadCCTV();
+        loadSafety();
     });
 }
 function setDot(id,st){
@@ -279,7 +294,7 @@ function analyze(idx){
         // ★ FastAPI 프록시 경유 → Claude AI 실시간 호출
         var prompt='당신은 40년 경력의 도로포장 전문가입니다. 아래 도로 조건을 N2B(Not-But-Because) 프레임워크로 분석하세요.\n\n도로 조건:\n- 위치: '+s.n+' (서울시)\n- 경사도: '+s.sl+'%\n- 연간 폭우(30mm/hr+): '+s.rn+'회\n- 우천시 사고: '+s.ac+'건/년\n- 일 교통량: '+s.tr.toLocaleString()+'대\n- 불투수면율: '+s.im+'%\n- 10년 침수: '+s.fl+'회\n- 소음민원: '+s.cm+'건/년\n\nJSON만 응답 (다른 텍스트 없이):\n{"recommendation":"배수성 또는 저소음 또는 투수성","risk_score":숫자,"urgency":"긴급|높음|보통|낮음","key_factors":["요인3개"],"n2b":{"n":"명제","b1":"BP강점","b2":"BP빈틈"},"improvement":"효과1문장","cost_억":숫자,"roi":숫자,"detail":"상세3~4문장"}';
 
-        fetch('/api/analyze',{
+        fetch(API_BASE+'/api/analyze',{
             method:'POST',
             headers:{'Content-Type':'application/json'},
             body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
@@ -348,6 +363,87 @@ function renderResult(r,s,mode){
 }
 
 function closeAI(){document.getElementById('aiP').classList.remove('show');}
+
+// ===== CCTV 레이어 =====
+var cctvLayer=L.layerGroup().addTo(map);
+var cctvVisible=true;
+
+function loadCCTV(){
+    fetch(API_BASE+'/api/cctv?lat=37.5665&lng=126.978&radius=0.15')
+    .then(function(r){return r.json();})
+    .then(function(d){
+        var items=d.data||[];
+        document.getElementById('cctvCnt').textContent=items.length;
+        items.forEach(function(c){
+            if(!c.lat||!c.lng)return;
+            var ic=L.divIcon({className:'',html:'<div style="width:12px;height:12px;background:#facc15;border:2px solid #fff;border-radius:3px;box-shadow:0 1px 4px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;font-size:7px;">📹</div>',iconSize:[12,12],iconAnchor:[6,6]});
+            var hasUrl=c.url&&c.url.length>10;
+            var popup='<div style="font-family:-apple-system,Malgun Gothic,sans-serif;">';
+            popup+='<div style="font-size:12px;font-weight:900;color:#facc15;margin-bottom:6px;">📹 '+c.name+'</div>';
+            popup+='<div style="font-size:9px;color:#888;margin-bottom:4px;">위치: '+c.lat.toFixed(4)+', '+c.lng.toFixed(4)+'</div>';
+            if(hasUrl){
+                popup+='<div style="margin:8px 0;text-align:center;"><img src="'+c.url+'" style="max-width:200px;border-radius:6px;border:1px solid rgba(250,204,21,.3);" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\';"/>';
+                popup+='<div style="display:none;padding:10px;background:rgba(250,204,21,.08);border-radius:6px;font-size:9px;color:#facc15;">영상 로딩 실패 — 직접 접속 필요</div></div>';
+                popup+='<a href="'+c.url+'" target="_blank" style="display:block;text-align:center;padding:6px;background:rgba(250,204,21,.12);border:1px solid rgba(250,204,21,.3);border-radius:6px;color:#facc15;font-size:9px;font-weight:700;text-decoration:none;">🔗 실시간 영상 열기</a>';
+            } else {
+                popup+='<div style="padding:8px;background:rgba(250,204,21,.08);border:1px solid rgba(250,204,21,.2);border-radius:6px;font-size:9px;color:#aaa;text-align:center;">'+d.status==='sample'?'샘플 데이터 — ITS API 키 등록 시 실시간 영상 연결':'영상 URL 없음'+'</div>';
+            }
+            popup+='</div>';
+            var mk=L.marker([c.lat,c.lng],{icon:ic}).bindPopup(popup,{maxWidth:240,minWidth:180});
+            cctvLayer.addLayer(mk);
+        });
+    })
+    .catch(function(){
+        document.getElementById('cctvCnt').textContent='–';
+    });
+}
+
+function togCCTV(el){
+    cctvVisible=!cctvVisible;
+    el.classList.toggle('on',cctvVisible);
+    el.querySelector('.dot').style.background=cctvVisible?'#facc15':'#333';
+    if(cctvVisible)map.addLayer(cctvLayer);else map.removeLayer(cctvLayer);
+}
+
+// ===== 도로안전시설 점검 레이어 =====
+var safetyLayer=L.layerGroup().addTo(map);
+var safetyVisible=true;
+var SC={'양호':'#22c55e','주의':'#f59e0b','교체필요':'#ef4444'};
+var SIcon={'가드레일':'🛡️','시선유도시설':'🔶','충격흡수시설':'🟥','도로표지':'🪧','도로반사경':'🪞','신호등':'🚦','배수시설':'🚿','방음벽':'🧱','조명시설':'💡','소방시설':'🧯','과속방지시설':'⚠️','교량시설':'🌉','보행시설':'🚶','보도블록':'🧱'};
+
+function loadSafety(){
+    fetch(API_BASE+'/api/safety-facilities?lat=37.5665&lng=126.978&radius=0.15')
+    .then(function(r){return r.json();})
+    .then(function(d){
+        var items=d.data||[];
+        document.getElementById('safetyCnt').textContent=items.length;
+        items.forEach(function(f){
+            var sc=SC[f.status]||'#888';
+            var si=SIcon[f.type]||'🔧';
+            var ic=L.divIcon({className:'',html:'<div style="width:14px;height:14px;background:'+sc+';border:2px solid #fff;border-radius:3px;box-shadow:0 1px 4px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;font-size:8px;">'+si+'</div>',iconSize:[14,14],iconAnchor:[7,7]});
+            var gc={'A':'#22c55e','B':'#86efac','C':'#f59e0b','D':'#ef4444'};
+            var popup='<div style="font-family:-apple-system,Malgun Gothic,sans-serif;">';
+            popup+='<div style="font-size:12px;font-weight:900;color:#fb923c;margin-bottom:6px;">🔧 '+f.name+'</div>';
+            popup+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;font-size:10px;margin-bottom:6px;">';
+            popup+='<div style="display:flex;justify-content:space-between;"><span style="color:#666;">유형</span><span style="font-weight:700;">'+f.type+'</span></div>';
+            popup+='<div style="display:flex;justify-content:space-between;"><span style="color:#666;">등급</span><span style="font-weight:900;color:'+(gc[f.grade]||'#888')+'">'+f.grade+'등급</span></div>';
+            popup+='<div style="display:flex;justify-content:space-between;"><span style="color:#666;">상태</span><span style="font-weight:700;color:'+sc+'">'+f.status+'</span></div>';
+            popup+='<div style="display:flex;justify-content:space-between;"><span style="color:#666;">점검일</span><span style="font-weight:700;">'+f.last_check+'</span></div>';
+            popup+='</div>';
+            popup+='<div style="padding:6px;background:rgba(251,146,60,.08);border:1px solid rgba(251,146,60,.2);border-radius:6px;font-size:9px;color:#ccc;line-height:1.4;">📋 '+f.issue+'</div>';
+            popup+='</div>';
+            var mk=L.marker([f.lat,f.lng],{icon:ic}).bindPopup(popup,{maxWidth:240,minWidth:180});
+            safetyLayer.addLayer(mk);
+        });
+    }).catch(function(){document.getElementById('safetyCnt').textContent='–';});
+}
+
+function togSafety(el){
+    safetyVisible=!safetyVisible;
+    el.classList.toggle('on',safetyVisible);
+    el.querySelector('.dot').style.background=safetyVisible?'#fb923c':'#333';
+    if(safetyVisible)map.addLayer(safetyLayer);else map.removeLayer(safetyLayer);
+}
 </script>
 </body>
 </html>
