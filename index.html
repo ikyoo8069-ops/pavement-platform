@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>기능성 포장 필요구간 자동 탐색 플랫폼</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#0a0a0f;color:#e0e0e0;overflow:hidden;height:100vh;display:flex;flex-direction:column;}
+
+/* 상단 */
+.top{background:#0f0f16;padding:7px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(240,180,41,.3);flex-shrink:0;z-index:2000;}
+.top h1{font-size:14px;font-weight:900;color:#f0b429;}
+.top .sub{font-size:10px;color:#666;}
+.top .badges{margin-left:auto;display:flex;gap:5px;}
+.badge{padding:2px 7px;border-radius:20px;font-size:9px;font-weight:700;}
+.badge-green{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.4);color:#22c55e;}
+.badge-red{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);color:#ef4444;}
+
+.main{display:flex;flex:1;overflow:hidden;}
+
+/* 좌측 패널 */
+.panel{width:270px;flex-shrink:0;background:rgba(12,12,18,.98);border-right:1px solid rgba(255,255,255,.06);overflow-y:auto;padding:10px;z-index:1500;font-size:10px;}
+.panel::-webkit-scrollbar{width:3px;}
+.panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
+.sec{margin-bottom:10px;}
+.sec-t{font-size:10px;font-weight:700;color:#f0b429;margin-bottom:5px;letter-spacing:.3px;}
+
+.ltog{display:flex;align-items:center;gap:5px;padding:5px 7px;margin-bottom:2px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:5px;cursor:pointer;transition:all .15s;}
+.ltog:hover{background:rgba(255,255,255,.06);}
+.ltog.on{border-color:var(--c);background:var(--bg);}
+.ltog .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;transition:background .15s;}
+.ltog .nm{font-weight:600;flex:1;font-size:10px;}
+.ltog .ct{font-weight:900;color:var(--c);font-size:10px;}
+
+.stat-card{padding:8px;margin-bottom:6px;background:rgba(240,180,41,.06);border:1px solid rgba(240,180,41,.2);border-radius:8px;text-align:center;}
+.stat-card .big{font-size:28px;font-weight:900;color:#f0b429;}
+.stat-card .lb{font-size:9px;color:#666;}
+
+.tgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;margin-bottom:6px;}
+.tg{padding:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:4px;text-align:center;}
+.tg .tn{font-size:10px;font-weight:700;}
+.tg .tv{font-size:11px;font-weight:900;color:#22c55e;margin-top:2px;}
+
+.api-st{margin-bottom:10px;}
+.api-row{display:flex;align-items:center;gap:5px;padding:3px 6px;font-size:9px;}
+.api-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.api-nm{flex:1;font-weight:600;}
+.api-status{font-size:8px;}
+
+.sitem{display:flex;align-items:center;gap:5px;padding:4px 6px;margin-bottom:2px;background:rgba(255,255,255,.03);border:1px solid transparent;border-radius:4px;cursor:pointer;transition:all .12s;}
+.sitem:hover{background:rgba(240,180,41,.1);}
+.sitem.active{background:rgba(240,180,41,.15);border-color:rgba(240,180,41,.3);}
+.sitem .rk{width:16px;height:16px;border-radius:50%;background:#f0b429;color:#000;font-size:8px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sitem .sn{flex:1;font-weight:600;font-size:10px;}
+.sitem .st{padding:1px 3px;border-radius:3px;font-size:8px;font-weight:700;}
+.sitem .sc{font-weight:900;color:#f0b429;font-size:9px;}
+
+/* 지도 */
+.map-wrap{flex:1;position:relative;z-index:1;}
+#map{width:100%;height:100%;z-index:1;}
+
+/* Leaflet 팝업 커스텀 */
+.leaflet-popup-content-wrapper{background:rgba(15,15,25,.96)!important;color:#e0e0e0!important;border:1px solid rgba(240,180,41,.35)!important;border-radius:10px!important;box-shadow:0 8px 32px rgba(0,0,0,.6)!important;}
+.leaflet-popup-tip{background:rgba(15,15,25,.96)!important;}
+.leaflet-popup-content{margin:10px 14px!important;font-family:-apple-system,'Malgun Gothic',sans-serif!important;}
+
+.pp-title{font-size:14px;font-weight:900;color:#f0b429;margin-bottom:8px;}
+.pp-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;font-size:10px;margin-bottom:8px;}
+.pp-row{display:flex;justify-content:space-between;}
+.pp-row .k{color:#666;}
+.pp-row .v{font-weight:700;}
+.pp-desc{font-size:9px;color:#888;line-height:1.4;margin-bottom:10px;}
+.pp-btn{width:100%;padding:10px;background:linear-gradient(135deg,#f0b429,#e09000);border:none;border-radius:8px;color:#000;font-weight:900;font-size:11px;cursor:pointer;text-align:center;}
+.pp-btn:hover{filter:brightness(1.1);}
+.pp-btn-sub{font-size:8px;color:#666;text-align:center;margin-top:3px;}
+
+/* AI 패널 */
+.ai-panel{position:absolute;top:10px;right:10px;width:330px;max-height:calc(100% - 20px);overflow-y:auto;background:rgba(12,12,18,.97);border:1px solid rgba(240,180,41,.4);border-radius:12px;padding:14px;box-shadow:0 8px 32px rgba(0,0,0,.7);z-index:1500;display:none;}
+.ai-panel.show{display:block;}
+.ai-panel::-webkit-scrollbar{width:3px;}
+.ai-panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
+
+.ai-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.ai-header h3{font-size:13px;font-weight:900;color:#f0b429;}
+.ai-close{cursor:pointer;color:#666;font-size:16px;}
+.ai-close:hover{color:#fff;}
+
+.ai-loading{text-align:center;padding:30px;}
+.ai-loading .spin{font-size:28px;display:inline-block;animation:spin 1s linear infinite;}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.ai-loading .msg{font-size:11px;color:#f0b429;font-weight:700;margin-top:8px;}
+.ai-loading .sub{font-size:9px;color:#666;margin-top:3px;}
+
+.ai-verdict{padding:12px;background:rgba(240,180,41,.1);border:1px solid rgba(240,180,41,.3);border-radius:8px;margin-bottom:10px;text-align:center;}
+.ai-verdict .label{font-size:9px;color:#888;margin-bottom:2px;}
+.ai-verdict .rec{font-size:20px;font-weight:900;}
+.ai-verdict .stats{display:flex;justify-content:center;gap:14px;margin-top:8px;}
+.ai-verdict .stat{text-align:center;}
+.ai-verdict .stat .sl{font-size:8px;color:#888;}
+.ai-verdict .stat .sv{font-size:15px;font-weight:900;}
+
+.ai-factors{margin-bottom:10px;}
+.ai-factors .title{font-size:10px;font-weight:700;color:#f0b429;margin-bottom:4px;}
+.ai-factor{font-size:9px;padding:3px 8px;margin-bottom:2px;background:rgba(239,68,68,.08);border-left:2px solid #ef4444;border-radius:0 4px 4px 0;color:#ccc;}
+
+.ai-n2b{padding:10px;background:rgba(240,180,41,.05);border:1px solid rgba(240,180,41,.15);border-radius:8px;margin-bottom:10px;}
+.ai-n2b .title{font-size:10px;font-weight:700;color:#f0b429;margin-bottom:6px;}
+.ai-n2b .line{font-size:10px;margin-bottom:4px;line-height:1.4;}
+.ai-n2b .ln{color:#ef4444;font-weight:700;}
+.ai-n2b .lb{color:#f0b429;font-weight:700;}
+
+.ai-cost{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;}
+.ai-cost-card{padding:8px;border-radius:6px;text-align:center;}
+.ai-cost-card .cl{font-size:8px;color:#888;}
+.ai-cost-card .cv{font-size:16px;font-weight:900;}
+.ai-cost-card .ct{font-size:9px;font-weight:600;margin-top:2px;line-height:1.3;}
+
+.ai-detail{padding:8px;background:rgba(255,255,255,.03);border-radius:6px;font-size:9px;color:#aaa;line-height:1.5;margin-bottom:10px;}
+.ai-detail .dt{font-size:9px;font-weight:700;color:#888;margin-bottom:3px;}
+
+.ai-retry{width:100%;padding:8px;background:rgba(240,180,41,.12);border:1px solid rgba(240,180,41,.3);border-radius:6px;color:#f0b429;font-weight:700;font-size:10px;cursor:pointer;}
+.ai-retry:hover{background:rgba(240,180,41,.2);}
+
+.ai-error{padding:12px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;font-size:10px;color:#ef4444;}
+
+/* 커스텀 마커 */
+.custom-marker{border-radius:50%;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;transition:transform .2s;}
+.custom-marker:hover{transform:scale(1.2);}
+
+/* N2B 박스 */
+.n2b-box{padding:8px;background:rgba(240,180,41,.04);border:1px solid rgba(240,180,41,.12);border-radius:6px;font-size:9px;line-height:1.5;margin-top:6px;}
+.n2b-box .nr{color:#ef4444;font-weight:700;}
+.n2b-box .br{color:#f0b429;font-weight:700;}
+
+/* 모바일 */
+@media(max-width:768px){
+    .panel{width:220px;padding:8px;}
+    .ai-panel{width:280px;right:5px;top:5px;}
+}
+@media(max-width:480px){
+    .panel{display:none;}
+    .ai-panel{width:calc(100% - 20px);left:10px;right:10px;}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+    <span style="font-size:18px;">🛣️</span>
+    <div>
+        <h1>기능성 포장 필요구간 자동 탐색 플랫폼</h1>
+        <div class="sub">실제 도로 지도 + Claude AI 실시간 분석 + 공공 API 연동</div>
+    </div>
+    <div class="badges">
+        <div class="badge badge-green">AI 연결됨</div>
+        <div class="badge badge-red">PROTOTYPE v1.0</div>
+    </div>
+</div>
+
+<div class="main">
+    <!-- 좌측 패널 -->
+    <div class="panel" id="panel">
+        <div class="sec">
+            <div class="sec-t">📊 포장 유형 레이어</div>
+            <div class="ltog on" style="--c:#ef4444;--bg:rgba(239,68,68,.06);" data-t="drain" onclick="togLayer(this)">
+                <div class="dot" style="background:#ef4444;"></div>
+                <div class="nm">🛣️ 배수성 (경사+폭우+사고)</div>
+                <div class="ct">9</div>
+            </div>
+            <div class="ltog on" style="--c:#a855f7;--bg:rgba(168,85,247,.06);" data-t="quiet" onclick="togLayer(this)">
+                <div class="dot" style="background:#a855f7;"></div>
+                <div class="nm">🔇 저소음 (주거+교통량)</div>
+                <div class="ct">8</div>
+            </div>
+            <div class="ltog on" style="--c:#06b6d4;--bg:rgba(6,182,212,.06);" data-t="perm" onclick="togLayer(this)">
+                <div class="dot" style="background:#06b6d4;"></div>
+                <div class="nm">💧 투수성 (침수+불투수면)</div>
+                <div class="ct">6</div>
+            </div>
+        </div>
+
+        <div class="sec">
+            <div class="sec-t">🎯 종합 분석</div>
+            <div class="stat-card">
+                <div class="big">23</div>
+                <div class="lb">기능성 포장 추천 구간</div>
+            </div>
+            <div class="tgrid">
+                <div class="tg"><div class="tn" style="color:#ef4444;">배수성</div><div class="tv">9곳</div></div>
+                <div class="tg"><div class="tn" style="color:#a855f7;">저소음</div><div class="tv">8곳</div></div>
+                <div class="tg"><div class="tn" style="color:#06b6d4;">투수성</div><div class="tv">6곳</div></div>
+            </div>
+        </div>
+
+        <div class="sec api-st">
+            <div class="sec-t">📡 API 연동 상태</div>
+            <div class="api-row"><div class="api-dot" style="background:#22c55e;"></div><div class="api-nm">Claude AI 분석</div><div class="api-status" style="color:#22c55e;">실시간</div></div>
+            <div class="api-row"><div class="api-dot" style="background:#22c55e;"></div><div class="api-nm">OpenStreetMap 지도</div><div class="api-status" style="color:#22c55e;">연결됨</div></div>
+            <div class="api-row"><div class="api-dot" style="background:#f59e0b;"></div><div class="api-nm">기상청 ASOS</div><div class="api-status" style="color:#666;">샘플</div></div>
+            <div class="api-row"><div class="api-dot" style="background:#f59e0b;"></div><div class="api-nm">TAAS 사고이력</div><div class="api-status" style="color:#666;">샘플</div></div>
+            <div class="api-row"><div class="api-dot" style="background:#f59e0b;"></div><div class="api-nm">국토정보 DEM</div><div class="api-status" style="color:#666;">샘플</div></div>
+            <div class="api-row"><div class="api-dot" style="background:#666;"></div><div class="api-nm">ITS CCTV</div><div class="api-status" style="color:#666;">미연결</div></div>
+        </div>
+
+        <div class="sec">
+            <div class="sec-t">🏆 우선순위 TOP 10</div>
+            <div id="spotList"></div>
+        </div>
+
+        <div class="sec">
+            <div class="n2b-box">
+                <div class="nr">N: "서울시 전체 도로에 기능성 포장"</div>
+                <div class="br">B: 전부는 아니지만</div>
+                <div class="br">B: 경사3%+∩폭우∩사고 → <b style="color:#f0b429;">23곳</b>엔 필요!</div>
+                <div style="color:#555;margin-top:3px;">→ 전체 2.3%만 → 사고 30%↓<br>23곳×2km×3천만 = <b style="color:#f0b429;">약 138억원</b></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 지도 -->
+    <div class="map-wrap">
+        <div id="map"></div>
+        <!-- AI 분석 패널 -->
+        <div class="ai-panel" id="aiPanel">
+            <div class="ai-header">
+                <h3>🤖 AI 종합 분석</h3>
+                <span class="ai-close" onclick="closeAI()">✕</span>
+            </div>
+            <div id="aiSpotName" style="font-size:11px;font-weight:700;color:#ccc;margin-bottom:8px;"></div>
+            <div id="aiContent"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ===== 데이터 =====
+var SPOTS = [
+    {id:1,n:'남산 순환로',la:37.5512,lo:126.9882,t:'drain',sl:6.2,rn:42,ac:8,sc:95,ds:'급경사 6.2% + 연 42회 폭우 + 우천사고 8건/년',tr:35000,im:60,fl:1,cm:3},
+    {id:2,n:'강남역 일대',la:37.4979,lo:127.0276,t:'perm',sl:1.2,rn:38,ac:3,sc:94,ds:'불투수면 92% + 침수 5회/10년',tr:72000,im:92,fl:5,cm:8},
+    {id:3,n:'올림픽대로 잠실',la:37.518,lo:127.075,t:'quiet',sl:0.8,rn:35,ac:4,sc:92,ds:'일 8.5만대 + 잠실아파트 인접',tr:85000,im:75,fl:2,cm:23},
+    {id:4,n:'북악스카이웨이',la:37.593,lo:126.967,t:'drain',sl:8.1,rn:38,ac:5,sc:91,ds:'급경사 8.1% + 커브 연속',tr:12000,im:30,fl:0,cm:1},
+    {id:5,n:'신림역 일대',la:37.484,lo:126.929,t:'perm',sl:2.1,rn:40,ac:4,sc:88,ds:'관악산 유수 + 침수 반복',tr:45000,im:85,fl:6,cm:5},
+    {id:6,n:'인왕산터널 진입',la:37.581,lo:126.958,t:'drain',sl:5.4,rn:40,ac:6,sc:88,ds:'터널 진출입 경사 + 노면 온도차',tr:28000,im:45,fl:1,cm:2},
+    {id:7,n:'내부순환 정릉',la:37.605,lo:127.008,t:'quiet',sl:1.5,rn:33,ac:3,sc:87,ds:'주거밀집 + 야간 화물차 소음',tr:62000,im:70,fl:1,cm:18},
+    {id:8,n:'동작대교 남단 램프',la:37.5050,lo:126.982,t:'drain',sl:4.8,rn:44,ac:7,sc:86,ds:'교량 접속부 경사 + 수막',tr:55000,im:65,fl:2,cm:4},
+    {id:9,n:'한남대교 북단 IC',la:37.534,lo:127.001,t:'drain',sl:4.2,rn:41,ac:9,sc:85,ds:'IC 램프 + 합류부 사고 다발',tr:68000,im:60,fl:1,cm:5},
+    {id:10,n:'사당역 일대',la:37.477,lo:126.982,t:'perm',sl:1.8,rn:39,ac:3,sc:85,ds:'저지대 + 불투수면 88%',tr:48000,im:88,fl:4,cm:6},
+    {id:11,n:'강변북로 성수',la:37.542,lo:127.044,t:'quiet',sl:0.5,rn:34,ac:3,sc:84,ds:'성수동 주거 인접',tr:78000,im:72,fl:2,cm:15},
+    {id:12,n:'우면산터널 접속부',la:37.475,lo:126.989,t:'drain',sl:4.5,rn:43,ac:6,sc:83,ds:'터널 + 2011 산사태 이력',tr:42000,im:55,fl:3,cm:3},
+    {id:13,n:'광화문 일대',la:37.572,lo:126.977,t:'perm',sl:0.5,rn:36,ac:2,sc:82,ds:'불투수면 95% + 보행공간',tr:25000,im:95,fl:3,cm:4},
+    {id:14,n:'강남대로 역삼',la:37.501,lo:127.037,t:'quiet',sl:1.0,rn:37,ac:4,sc:82,ds:'상업+주거 야간소음',tr:72000,im:80,fl:2,cm:20},
+    {id:15,n:'양재대로 서초',la:37.483,lo:127.024,t:'quiet',sl:1.3,rn:36,ac:3,sc:81,ds:'서초 주거 + 대형차량',tr:68000,im:78,fl:1,cm:16},
+    {id:16,n:'성산대교 남단',la:37.548,lo:126.912,t:'drain',sl:3.8,rn:39,ac:5,sc:80,ds:'교량 접속 경사',tr:52000,im:60,fl:1,cm:4},
+    {id:17,n:'동부간선 장한평',la:37.562,lo:127.065,t:'quiet',sl:0.8,rn:32,ac:2,sc:79,ds:'아파트 + 터널 소음',tr:55000,im:68,fl:1,cm:12},
+    {id:18,n:'관악산 서울대입구',la:37.464,lo:126.952,t:'drain',sl:7.5,rn:36,ac:4,sc:78,ds:'산지 7.5% + 배수 불량',tr:18000,im:40,fl:2,cm:2},
+    {id:19,n:'도림천 주변 보도',la:37.495,lo:126.903,t:'perm',sl:0.8,rn:38,ac:1,sc:77,ds:'하천변 침수 취약',tr:15000,im:80,fl:4,cm:3},
+    {id:20,n:'서부간선 신길',la:37.508,lo:126.915,t:'quiet',sl:0.6,rn:35,ac:3,sc:76,ds:'주거밀집 + 화물차',tr:48000,im:72,fl:1,cm:14},
+    {id:21,n:'대모산 진입로',la:37.482,lo:127.065,t:'drain',sl:5.8,rn:35,ac:3,sc:74,ds:'산지 경사 + 낙엽',tr:8000,im:25,fl:0,cm:1},
+    {id:22,n:'북부간선 월계',la:37.625,lo:127.052,t:'quiet',sl:0.7,rn:31,ac:2,sc:73,ds:'아파트 옆 고가도로',tr:45000,im:65,fl:1,cm:11},
+    {id:23,n:'중랑천 변 보도',la:37.575,lo:127.048,t:'perm',sl:0.4,rn:33,ac:1,sc:72,ds:'하천변 월류 이력',tr:12000,im:78,fl:3,cm:2}
+];
+SPOTS.sort(function(a,b){return b.sc-a.sc;});
+
+var COL={drain:'#ef4444',quiet:'#a855f7',perm:'#06b6d4'};
+var TN={drain:'배수성',quiet:'저소음',perm:'투수성'};
+var TI={drain:'🛣️',quiet:'🔇',perm:'💧'};
+var vis={drain:true,quiet:true,perm:true};
+var currentSpotIdx = null;
+
+// ===== 지도 초기화 =====
+var map = L.map('map',{zoomControl:false}).setView([37.5665,126.978],12);
+L.control.zoom({position:'topright'}).addTo(map);
+
+// 다크 타일 (CartoDB Dark)
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+    attribution:'&copy; <a href="https://openstreetmap.org">OSM</a> &copy; <a href="https://carto.com">CARTO</a>',
+    subdomains:'abcd',maxZoom:19
+}).addTo(map);
+
+// 마커 레이어 그룹
+var markerLayers = {drain:L.layerGroup().addTo(map),quiet:L.layerGroup().addTo(map),perm:L.layerGroup().addTo(map)};
+var markers = [];
+
+// ===== 마커 생성 =====
+SPOTS.forEach(function(s,i){
+    var c = COL[s.t];
+    var sz = s.sc>=90?30:s.sc>=80?24:18;
+    var icon = L.divIcon({
+        className:'',
+        html:'<div class="custom-marker" style="width:'+sz+'px;height:'+sz+'px;background:'+c+';font-size:'+(sz>24?12:sz>18?10:8)+'px;">'+(i<10?(i+1):'')+'</div>',
+        iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]
+    });
+    
+    // 팝업 내용
+    var popupHTML = '<div class="pp-title">'+TI[s.t]+' '+s.n+'</div>';
+    popupHTML += '<div class="pp-grid">';
+    popupHTML += '<div class="pp-row"><span class="k">추천포장</span><span class="v" style="color:'+c+'">'+TN[s.t]+'</span></div>';
+    popupHTML += '<div class="pp-row"><span class="k">위험점수</span><span class="v" style="color:#f0b429">'+s.sc+'/100</span></div>';
+    popupHTML += '<div class="pp-row"><span class="k">경사도</span><span class="v">'+s.sl+'%</span></div>';
+    popupHTML += '<div class="pp-row"><span class="k">연폭우</span><span class="v">'+s.rn+'회</span></div>';
+    popupHTML += '<div class="pp-row"><span class="k">우천사고</span><span class="v" style="color:#ef4444">'+s.ac+'건/년</span></div>';
+    popupHTML += '<div class="pp-row"><span class="k">교통량</span><span class="v">'+(s.tr/10000).toFixed(1)+'만대</span></div>';
+    popupHTML += '<div class="pp-row"><span class="k">불투수면</span><span class="v">'+s.im+'%</span></div>';
+    popupHTML += '<div class="pp-row"><span class="k">침수이력</span><span class="v">'+s.fl+'회/10년</span></div>';
+    popupHTML += '</div>';
+    popupHTML += '<div class="pp-desc">'+s.ds+'</div>';
+    popupHTML += '<button class="pp-btn" onclick="analyzeSpot('+i+')">🤖 Claude AI 종합 분석 실행</button>';
+    popupHTML += '<div class="pp-btn-sub">실시간 API → N2B 프레임워크 적용</div>';
+    
+    var marker = L.marker([s.la,s.lo],{icon:icon}).bindPopup(popupHTML,{maxWidth:260,minWidth:220});
+    
+    // 영향 반경 원
+    var radius = s.sc>=90?400:s.sc>=80?300:200;
+    var circle = L.circle([s.la,s.lo],{radius:radius,color:c,fillColor:c,fillOpacity:.06,weight:1,opacity:.2});
+    
+    markerLayers[s.t].addLayer(marker);
+    markerLayers[s.t].addLayer(circle);
+    markers.push({marker:marker,circle:circle,spot:s,idx:i});
+});
+
+// ===== 레이어 토글 =====
+function togLayer(el){
+    var t = el.getAttribute('data-t');
+    vis[t] = !vis[t];
+    el.classList.toggle('on',vis[t]);
+    el.querySelector('.dot').style.background = vis[t]?COL[t]:'#333';
+    if(vis[t]) map.addLayer(markerLayers[t]);
+    else map.removeLayer(markerLayers[t]);
+}
+
+// ===== TOP 10 리스트 =====
+var listEl = document.getElementById('spotList');
+SPOTS.slice(0,10).forEach(function(s,i){
+    var c = COL[s.t];
+    var div = document.createElement('div');
+    div.className = 'sitem';
+    div.setAttribute('data-idx',i);
+    div.innerHTML = '<div class="rk">'+(i+1)+'</div><div class="sn">'+s.n+'</div><div class="st" style="background:'+c+'25;color:'+c+';">'+TN[s.t]+'</div><div class="sc">'+s.sc+'</div>';
+    div.onclick = function(){
+        map.setView([s.la,s.lo],15);
+        markers[i].marker.openPopup();
+        document.querySelectorAll('.sitem').forEach(function(el){el.classList.remove('active');});
+        div.classList.add('active');
+    };
+    listEl.appendChild(div);
+});
+
+// ===== AI 분석 =====
+function analyzeSpot(idx){
+    var s = SPOTS[idx];
+    currentSpotIdx = idx;
+    var panel = document.getElementById('aiPanel');
+    var content = document.getElementById('aiContent');
+    var nameEl = document.getElementById('aiSpotName');
+    
+    nameEl.textContent = TI[s.t]+' '+s.n;
+    panel.classList.add('show');
+    
+    // 로딩
+    content.innerHTML = '<div class="ai-loading"><div class="spin">🤖</div><div class="msg">Claude AI 분석 중...</div><div class="sub">경사도·강수·사고·소음 4개 레이어 교차 분석 + N2B 적용</div></div>';
+    
+    // API 호출
+    var prompt = '당신은 40년 경력의 도로포장 전문가입니다. 아래 도로 조건을 분석하고, N2B(Not-But-Because) 프레임워크를 적용하여 기능성 포장 필요성을 판정하세요.\n\n도로 조건:\n- 위치: '+s.n+' (서울시)\n- 경사도: '+s.sl+'%\n- 연간 폭우 횟수 (30mm/hr 이상): '+s.rn+'회\n- 우천시 교통사고: '+s.ac+'건/년\n- 일 교통량: '+s.tr.toLocaleString()+'대\n- 불투수면율: '+s.im+'%\n- 10년간 침수 이력: '+s.fl+'회\n- 소음 민원: '+s.cm+'건/년\n\n반드시 아래 JSON 형식으로만 응답하세요. JSON 외에 다른 텍스트를 포함하지 마세요:\n{"recommendation":"배수성 또는 저소음 또는 투수성","risk_score":0에서100사이숫자,"urgency":"긴급 또는 높음 또는 보통 또는 낮음","key_factors":["주요 위험 요인 3개를 배열로"],"n2b":{"n":"기능성 포장 필요성 명제","b1":"현재 BP의 강점","b2":"현재 BP의 빈틈"},"improvement":"예상 개선 효과 1문장","cost_억":예상비용숫자,"roi":투자대비효과배수,"detail":"상세 분석 3~4문장"}';
+
+    fetch("https://api.anthropic.com/v1/messages",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            model:"claude-sonnet-4-20250514",
+            max_tokens:1000,
+            messages:[{role:"user",content:prompt}]
+        })
+    })
+    .then(function(resp){return resp.json();})
+    .then(function(data){
+        var text = '';
+        if(data.content){
+            data.content.forEach(function(b){if(b.text) text+=b.text;});
+        }
+        var clean = text.replace(/```json|```/g,'').trim();
+        var result = JSON.parse(clean);
+        renderAIResult(result,s);
+    })
+    .catch(function(err){
+        content.innerHTML = '<div class="ai-error">AI 분석 중 오류가 발생했습니다: '+err.message+'<br><br>GitHub Pages에 배포 후 사용해주세요.</div>';
+    });
+}
+
+function renderAIResult(r,s){
+    var c = COL[s.t];
+    var recKey = Object.keys(TN).find(function(k){return TN[k]===r.recommendation;});
+    var recColor = recKey ? COL[recKey] : '#f0b429';
+    var urgColors = {'긴급':'#ef4444','높음':'#f59e0b','보통':'#22c55e','낮음':'#64748b'};
+    
+    var h = '';
+    
+    // 판정 결과
+    h += '<div class="ai-verdict">';
+    h += '<div class="label">AI 판정 결과</div>';
+    h += '<div class="rec" style="color:'+recColor+'">'+r.recommendation+' 포장</div>';
+    h += '<div class="stats">';
+    h += '<div class="stat"><div class="sl">위험점수</div><div class="sv" style="color:#f0b429">'+r.risk_score+'</div></div>';
+    h += '<div class="stat"><div class="sl">긴급도</div><div class="sv" style="color:'+(urgColors[r.urgency]||'#888')+'">'+r.urgency+'</div></div>';
+    h += '<div class="stat"><div class="sl">ROI</div><div class="sv" style="color:#22c55e">'+r.roi+'배</div></div>';
+    h += '</div></div>';
+    
+    // 핵심 위험 요인
+    h += '<div class="ai-factors"><div class="title">⚠️ 핵심 위험 요인</div>';
+    if(r.key_factors){
+        r.key_factors.forEach(function(f){
+            h += '<div class="ai-factor">'+f+'</div>';
+        });
+    }
+    h += '</div>';
+    
+    // N2B 분석
+    h += '<div class="ai-n2b">';
+    h += '<div class="title">🔬 N2B 프레임워크 분석</div>';
+    if(r.n2b){
+        h += '<div class="line"><span class="ln">N:</span> '+r.n2b.n+'</div>';
+        h += '<div class="line"><span class="lb">B₁ (강점):</span> <span style="color:#888">'+r.n2b.b1+'</span></div>';
+        h += '<div class="line"><span class="lb">B₂ (빈틈):</span> '+r.n2b.b2+'</div>';
+    }
+    h += '</div>';
+    
+    // 비용 & 효과
+    h += '<div class="ai-cost">';
+    h += '<div class="ai-cost-card" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);"><div class="cl">예상 비용</div><div class="cv" style="color:#22c55e">'+r.cost_억+'억</div></div>';
+    h += '<div class="ai-cost-card" style="background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2);"><div class="cl">예상 효과</div><div class="ct" style="color:#a855f7">'+r.improvement+'</div></div>';
+    h += '</div>';
+    
+    // 상세 분석
+    h += '<div class="ai-detail"><div class="dt">📋 상세 분석</div>'+r.detail+'</div>';
+    
+    // 재분석
+    h += '<button class="ai-retry" onclick="analyzeSpot('+currentSpotIdx+')">🔄 재분석</button>';
+    
+    document.getElementById('aiContent').innerHTML = h;
+}
+
+function closeAI(){
+    document.getElementById('aiPanel').classList.remove('show');
+}
+
+// 지도 클릭 시 AI 패널 닫기
+map.on('click',function(e){
+    // 마커 클릭이 아닌 경우만
+});
+</script>
+</body>
+</html>
