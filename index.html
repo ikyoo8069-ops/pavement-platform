@@ -13,34 +13,30 @@ body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#0a0a0f;col
 .top h1{font-size:14px;font-weight:900;color:#f0b429;}
 .top .sub{font-size:10px;color:#666;}
 .badges{margin-left:auto;display:flex;gap:5px;}
-.badge{padding:2px 7px;border-radius:20px;font-size:9px;font-weight:700;}
-.bg{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.4);color:#22c55e;}
-.br{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);color:#ef4444;}
+.badge{padding:2px 7px;border-radius:20px;font-size:9px;font-weight:700;transition:all .3s;}
+.b-g{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.4);color:#22c55e;}
+.b-y{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.4);color:#f59e0b;}
+.b-r{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);color:#ef4444;}
 .main{display:flex;flex:1;overflow:hidden;}
-
-/* 패널 */
 .pn{width:270px;flex-shrink:0;background:rgba(12,12,18,.98);border-right:1px solid rgba(255,255,255,.06);overflow-y:auto;padding:10px;z-index:1500;font-size:10px;}
-.pn::-webkit-scrollbar{width:3px;}
-.pn::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
-.sc{margin-bottom:10px;}
-.st{font-size:10px;font-weight:700;color:#f0b429;margin-bottom:5px;}
+.pn::-webkit-scrollbar{width:3px;}.pn::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
+.sec{margin-bottom:10px;}
+.stt{font-size:10px;font-weight:700;color:#f0b429;margin-bottom:5px;}
 .lt{display:flex;align-items:center;gap:5px;padding:5px 7px;margin-bottom:2px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:5px;cursor:pointer;transition:all .15s;}
 .lt:hover{background:rgba(255,255,255,.06);}
 .lt.on{border-color:var(--c);background:var(--bg);}
-.lt .dt{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.lt .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 .lt .nm{font-weight:600;flex:1;font-size:10px;}
 .lt .ct{font-weight:900;color:var(--c);font-size:10px;}
 .rc{padding:8px;margin-bottom:6px;background:rgba(240,180,41,.06);border:1px solid rgba(240,180,41,.2);border-radius:8px;text-align:center;}
-.rc .bi{font-size:28px;font-weight:900;color:#f0b429;}
-.rc .lb{font-size:9px;color:#666;}
-.tg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;margin-bottom:6px;}
+.rc .bi{font-size:28px;font-weight:900;color:#f0b429;}.rc .lb{font-size:9px;color:#666;}
+.tgr{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;margin-bottom:6px;}
 .tc{padding:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:4px;text-align:center;}
-.tc .tn{font-size:10px;font-weight:700;}
-.tc .tv{font-size:11px;font-weight:900;color:#22c55e;margin-top:2px;}
+.tc .tn{font-size:10px;font-weight:700;}.tc .tv{font-size:11px;font-weight:900;color:#22c55e;margin-top:2px;}
 .ar{display:flex;align-items:center;gap:5px;padding:3px 6px;font-size:9px;}
-.ad{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
-.an{flex:1;font-weight:600;}
-.as{font-size:8px;}
+.ard{width:6px;height:6px;border-radius:50%;flex-shrink:0;transition:background .3s;}
+.arn{flex:1;font-weight:600;}
+.ars{font-size:8px;transition:color .3s;}
 .si{display:flex;align-items:center;gap:5px;padding:4px 6px;margin-bottom:2px;background:rgba(255,255,255,.03);border:1px solid transparent;border-radius:4px;cursor:pointer;transition:all .12s;}
 .si:hover{background:rgba(240,180,41,.1);}
 .si.ac{background:rgba(240,180,41,.15);border-color:rgba(240,180,41,.3);}
@@ -48,9 +44,7 @@ body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#0a0a0f;col
 .si .sn{flex:1;font-weight:600;font-size:10px;}
 .si .ss{padding:1px 3px;border-radius:3px;font-size:8px;font-weight:700;}
 .si .sv{font-weight:900;color:#f0b429;font-size:9px;}
-.nb{padding:8px;background:rgba(240,180,41,.04);border:1px solid rgba(240,180,41,.12);border-radius:6px;font-size:9px;line-height:1.5;margin-top:6px;}
-
-/* 지도 */
+.nb{padding:8px;background:rgba(240,180,41,.04);border:1px solid rgba(240,180,41,.12);border-radius:6px;font-size:9px;line-height:1.5;}
 .mw{flex:1;position:relative;z-index:1;}
 #map{width:100%;height:100%;z-index:1;}
 .leaflet-popup-content-wrapper{background:rgba(15,15,25,.96)!important;color:#e0e0e0!important;border:1px solid rgba(240,180,41,.35)!important;border-radius:10px!important;box-shadow:0 8px 32px rgba(0,0,0,.6)!important;}
@@ -58,9 +52,7 @@ body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#0a0a0f;col
 .leaflet-popup-content{margin:10px 14px!important;font-family:-apple-system,'Malgun Gothic',sans-serif!important;}
 .pt{font-size:14px;font-weight:900;color:#f0b429;margin-bottom:8px;}
 .pg{display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;font-size:10px;margin-bottom:8px;}
-.pr{display:flex;justify-content:space-between;}
-.pr .k{color:#666;}
-.pr .v{font-weight:700;}
+.pr{display:flex;justify-content:space-between;}.pr .k{color:#666;}.pr .v{font-weight:700;}
 .pd{font-size:9px;color:#888;line-height:1.4;margin-bottom:10px;}
 .pb{width:100%;padding:10px;background:linear-gradient(135deg,#f0b429,#e09000);border:none;border-radius:8px;color:#000;font-weight:900;font-size:11px;cursor:pointer;}
 .pb:hover{filter:brightness(1.1);}
@@ -71,47 +63,42 @@ body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#0a0a0f;col
 /* AI 패널 */
 .ap{position:absolute;top:10px;right:10px;width:350px;max-height:calc(100% - 20px);overflow-y:auto;background:rgba(12,12,18,.97);border:1px solid rgba(240,180,41,.4);border-radius:12px;padding:14px;box-shadow:0 8px 32px rgba(0,0,0,.7);z-index:1500;display:none;}
 .ap.show{display:block;}
-.ap::-webkit-scrollbar{width:3px;}
-.ap::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
+.ap::-webkit-scrollbar{width:3px;}.ap::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
 .ah{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
 .ah h3{font-size:13px;font-weight:900;color:#f0b429;}
-.ax{cursor:pointer;color:#666;font-size:16px;padding:2px 6px;}
-.ax:hover{color:#fff;}
+.ax{cursor:pointer;color:#666;font-size:16px;padding:2px 6px;}.ax:hover{color:#fff;}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 .al{text-align:center;padding:30px;}
 .al .sp{font-size:28px;display:inline-block;animation:spin 1s linear infinite;}
-@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 .al .mg{font-size:11px;color:#f0b429;font-weight:700;margin-top:8px;}
 .al .su{font-size:9px;color:#666;margin-top:3px;}
+.mt{padding:2px 8px;border-radius:10px;font-size:8px;display:inline-block;}
+.mt-l{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:#22c55e;}
+.mt-o{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:#f59e0b;}
 
 .av{padding:12px;background:rgba(240,180,41,.1);border:1px solid rgba(240,180,41,.3);border-radius:8px;margin-bottom:10px;text-align:center;}
 .av .ll{font-size:9px;color:#888;margin-bottom:2px;}
 .av .re{font-size:22px;font-weight:900;}
-.av .ss{display:flex;justify-content:center;gap:14px;margin-top:8px;}
-.av .ss>div{text-align:center;}
+.av .vs{display:flex;justify-content:center;gap:14px;margin-top:8px;}
+.av .vs>div{text-align:center;}
 .av .sl{font-size:8px;color:#888;}
 .av .sv2{font-size:15px;font-weight:900;}
-
 .af{margin-bottom:10px;}
 .af .ti{font-size:10px;font-weight:700;color:#f0b429;margin-bottom:4px;}
 .af .fi{font-size:9px;padding:4px 8px;margin-bottom:2px;background:rgba(239,68,68,.08);border-left:2px solid #ef4444;border-radius:0 4px 4px 0;color:#ccc;line-height:1.4;}
-
 .an2{padding:10px;background:rgba(240,180,41,.05);border:1px solid rgba(240,180,41,.15);border-radius:8px;margin-bottom:10px;}
 .an2 .ti{font-size:10px;font-weight:700;color:#f0b429;margin-bottom:6px;}
 .an2 .li{font-size:10px;margin-bottom:5px;line-height:1.5;}
 .an2 .ln{color:#ef4444;font-weight:700;}
-.an2 .lb{color:#f0b429;font-weight:700;}
-
+.an2 .lb2{color:#f0b429;font-weight:700;}
 .ac2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;}
 .ac2>div{padding:8px;border-radius:6px;text-align:center;}
-.ac2 .cl{font-size:8px;color:#888;}
-.ac2 .cv{font-size:16px;font-weight:900;}
-.ac2 .ct{font-size:9px;font-weight:600;margin-top:2px;line-height:1.3;}
-
+.ac2 .cl{font-size:8px;color:#888;}.ac2 .cv{font-size:16px;font-weight:900;}.ac2 .ct2{font-size:9px;font-weight:600;margin-top:2px;line-height:1.3;}
 .ad2{padding:8px;background:rgba(255,255,255,.03);border-radius:6px;font-size:9px;color:#aaa;line-height:1.6;margin-bottom:10px;}
 .ad2 .dti{font-size:9px;font-weight:700;color:#888;margin-bottom:4px;}
-
 .art{width:100%;padding:8px;background:rgba(240,180,41,.12);border:1px solid rgba(240,180,41,.3);border-radius:6px;color:#f0b429;font-weight:700;font-size:10px;cursor:pointer;margin-top:4px;}
 .art:hover{background:rgba(240,180,41,.2);}
+.ae{padding:12px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:8px;font-size:10px;color:#ef4444;line-height:1.5;}
 
 @media(max-width:768px){.pn{width:220px;}.ap{width:300px;}}
 @media(max-width:480px){.pn{display:none;}.ap{width:calc(100% - 20px);left:10px;right:10px;}}
@@ -121,38 +108,43 @@ body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#0a0a0f;col
 
 <div class="top">
     <span style="font-size:18px;">🛣️</span>
-    <div><h1>기능성 포장 필요구간 자동 탐색 플랫폼</h1><div class="sub">실제 도로 지도 + AI N2B 분석 + 공공 API 연동 아키텍처</div></div>
-    <div class="badges"><div class="badge bg">AI 분석 내장</div><div class="badge br">PROTOTYPE v1.0</div></div>
+    <div><h1>기능성 포장 필요구간 자동 탐색 플랫폼</h1><div class="sub">실제 도로 지도 + Claude AI 실시간 N2B 분석 + 공공 API 연동</div></div>
+    <div class="badges">
+        <div class="badge b-y" id="aiBadge">AI 확인중...</div>
+        <div class="badge b-r">PROTOTYPE v1.0</div>
+    </div>
 </div>
 
 <div class="main">
 <div class="pn">
-    <div class="sc">
-        <div class="st">📊 포장 유형 레이어</div>
-        <div class="lt on" style="--c:#ef4444;--bg:rgba(239,68,68,.06);" data-t="drain" onclick="tog(this)"><div class="dt" style="background:#ef4444;"></div><div class="nm">🛣️ 배수성 (경사+폭우+사고)</div><div class="ct">9</div></div>
-        <div class="lt on" style="--c:#a855f7;--bg:rgba(168,85,247,.06);" data-t="quiet" onclick="tog(this)"><div class="dt" style="background:#a855f7;"></div><div class="nm">🔇 저소음 (주거+교통량)</div><div class="ct">8</div></div>
-        <div class="lt on" style="--c:#06b6d4;--bg:rgba(6,182,212,.06);" data-t="perm" onclick="tog(this)"><div class="dt" style="background:#06b6d4;"></div><div class="nm">💧 투수성 (침수+불투수면)</div><div class="ct">6</div></div>
+    <div class="sec">
+        <div class="stt">📊 포장 유형 레이어</div>
+        <div class="lt on" style="--c:#ef4444;--bg:rgba(239,68,68,.06);" data-t="drain" onclick="tog(this)"><div class="dot" style="background:#ef4444;"></div><div class="nm">🛣️ 배수성 (경사+폭우+사고)</div><div class="ct">9</div></div>
+        <div class="lt on" style="--c:#a855f7;--bg:rgba(168,85,247,.06);" data-t="quiet" onclick="tog(this)"><div class="dot" style="background:#a855f7;"></div><div class="nm">🔇 저소음 (주거+교통량)</div><div class="ct">8</div></div>
+        <div class="lt on" style="--c:#06b6d4;--bg:rgba(6,182,212,.06);" data-t="perm" onclick="tog(this)"><div class="dot" style="background:#06b6d4;"></div><div class="nm">💧 투수성 (침수+불투수면)</div><div class="ct">6</div></div>
     </div>
-    <div class="sc">
-        <div class="st">🎯 종합 분석</div>
+    <div class="sec">
+        <div class="stt">🎯 종합 분석</div>
         <div class="rc"><div class="bi">23</div><div class="lb">기능성 포장 추천 구간</div></div>
-        <div class="tg">
+        <div class="tgr">
             <div class="tc"><div class="tn" style="color:#ef4444;">배수성</div><div class="tv">9곳</div></div>
             <div class="tc"><div class="tn" style="color:#a855f7;">저소음</div><div class="tv">8곳</div></div>
             <div class="tc"><div class="tn" style="color:#06b6d4;">투수성</div><div class="tv">6곳</div></div>
         </div>
     </div>
-    <div class="sc">
-        <div class="st">📡 API 연동 상태</div>
-        <div class="ar"><div class="ad" style="background:#22c55e;"></div><div class="an">AI N2B 분석</div><div class="as" style="color:#22c55e;">내장</div></div>
-        <div class="ar"><div class="ad" style="background:#22c55e;"></div><div class="an">OSM 도로 지도</div><div class="as" style="color:#22c55e;">연결</div></div>
-        <div class="ar"><div class="ad" style="background:#f59e0b;"></div><div class="an">기상청/TAAS/DEM</div><div class="as" style="color:#666;">샘플</div></div>
+    <div class="sec">
+        <div class="stt">📡 API 연동 상태</div>
+        <div class="ar"><div class="ard" id="d-ai" style="background:#f59e0b;"></div><div class="arn">Claude AI 분석</div><div class="ars" id="s-ai" style="color:#f59e0b;">확인중</div></div>
+        <div class="ar"><div class="ard" style="background:#22c55e;"></div><div class="arn">OSM 도로 지도</div><div class="ars" style="color:#22c55e;">연결됨</div></div>
+        <div class="ar"><div class="ard" id="d-wx" style="background:#666;"></div><div class="arn">기상청 ASOS</div><div class="ars" id="s-wx" style="color:#666;">확인중</div></div>
+        <div class="ar"><div class="ard" id="d-ta" style="background:#666;"></div><div class="arn">TAAS 사고이력</div><div class="ars" id="s-ta" style="color:#666;">확인중</div></div>
+        <div class="ar"><div class="ard" id="d-dm" style="background:#666;"></div><div class="arn">국토정보 DEM</div><div class="ars" id="s-dm" style="color:#666;">확인중</div></div>
     </div>
-    <div class="sc">
-        <div class="st">🏆 우선순위 TOP 10</div>
+    <div class="sec">
+        <div class="stt">🏆 우선순위 TOP 10</div>
         <div id="list"></div>
     </div>
-    <div class="sc">
+    <div class="sec">
         <div class="nb">
             <div style="color:#ef4444;font-weight:700;">N: "서울시 전체 도로에 기능성 포장"</div>
             <div style="color:#f0b429;font-weight:700;">B: 전부는 아니지만</div>
@@ -177,111 +169,65 @@ var COL={drain:'#ef4444',quiet:'#a855f7',perm:'#06b6d4'};
 var TN={drain:'배수성',quiet:'저소음',perm:'투수성'};
 var TI={drain:'🛣️',quiet:'🔇',perm:'💧'};
 var vis={drain:1,quiet:1,perm:1};
+var AI_MODE='checking'; // 'live' or 'offline'
 
+// ===== 23개 구간 데이터 =====
 var D=[
-{id:1,n:'남산 순환로',la:37.5512,lo:126.9882,t:'drain',sl:6.2,rn:42,ac:8,sc:95,tr:35000,im:60,fl:1,cm:3,
- ds:'급경사 6.2% + 연 42회 폭우 + 우천사고 8건/년',
- ai:{rec:'배수성',rs:95,urg:'긴급',roi:4.2,cost:7.6,
-  kf:['경사도 6.2%로 수막현상 발생 임계치(3%) 2배 초과','연 42회 집중호우 시 노면 배수 불량으로 수막 형성','우천 시 사고 8건/년으로 서울시 동종 도로 대비 3.2배'],
-  n:{n:'남산 순환로에 배수성 포장이 시급하다',b1:'현행 PMS 기반 포장 관리가 균열·소성변형 등 물리적 손상을 효과적으로 탐지하고, 전문가 현장 답사를 통한 종합 판단이 이루어지고 있음',b2:'경사도·강수빈도·사고이력 3개 레이어를 동시에 교차 분석하는 시스템이 부재하여 수막현상 위험 구간의 사전 예방적 포장 전환이 불가능'},
-  imp:'우천 시 사고 약 3건 감소 및 수막현상 80% 해소 기대',
-  det:'남산 순환로는 경사도 6.2%에 연간 42회의 집중호우가 발생하여 수막현상 위험이 극도로 높은 구간입니다. 최근 3년간 우천 시 8건의 사고가 발생하여 서울시 평균의 약 3.2배에 달합니다. 다공성 아스팔트(배수성 포장) 적용 시 수막 즉시 제거, 야간 전조등 반사 억제, 타이어 소음 저감 등 복합 효과가 기대됩니다. 국내외 유사 경사 구간에서 우천 사고율 30~40% 감소가 검증되었습니다.'}},
-{id:2,n:'강남역 일대',la:37.4979,lo:127.0276,t:'perm',sl:1.2,rn:38,ac:3,sc:94,tr:72000,im:92,fl:5,cm:8,
- ds:'불투수면 92% + 침수 5회/10년',
- ai:{rec:'투수성',rs:94,urg:'긴급',roi:5.8,cost:4.5,
-  kf:['불투수면율 92%로 서울시 최상위 수준','10년간 침수 5회로 반복 피해 지역 (2022년 대침수 포함)','일 7.2만대 교통량으로 침수 시 대규모 교통마비'],
-  n:{n:'강남역 일대 보행로에 투수성 포장이 시급하다',b1:'하수도 확장·빗물펌프장 등 기존 배수 인프라 투자가 일반 강수량에 대응하고 있음',b2:'시간당 80mm 이상 극한 강수 시 불투수면 92%의 지표면이 유출량을 감당하지 못하며, 포장 자체의 우수 침투 기능이 부재하여 근본적 침수 예방이 불가능'},
-  imp:'우수 침투율 70% 확보, 침수 피해 3회→1회로 감소 전망',
-  det:'강남역 일대는 불투수면율 92%로 서울시 최상위 수준이며, 10년간 5회의 침수 피해를 겪었습니다. 2022년 집중호우 당시 지하철 역사까지 침수되어 막대한 피해가 발생했습니다. 기존 보도 블록을 투수성 블록으로 전환하면 시간당 300mm 이상의 투수 능력을 확보할 수 있습니다. 이는 하수도 부하 저감, 지하수 함양, 도시 열섬 완화 등 다중 편익을 제공하며, 서울시 빗물관리 기본계획의 핵심 사업과 직결됩니다.'}},
-{id:3,n:'올림픽대로 잠실',la:37.518,lo:127.075,t:'quiet',sl:0.8,rn:35,ac:4,sc:92,tr:85000,im:75,fl:2,cm:23,
- ds:'일 8.5만대 + 잠실아파트 인접',
- ai:{rec:'저소음',rs:92,urg:'긴급',roi:3.8,cost:6.2,
-  kf:['일 8.5만대의 대교통량으로 상시 70dB 이상 소음 발생','잠실 아파트단지 직접 인접으로 주민 피해 심각','연간 소음 민원 23건으로 서울시 도로 소음 민원 상위 1%'],
-  n:{n:'올림픽대로 잠실구간에 저소음 포장이 시급하다',b1:'방음벽·방음터널 등 기존 소음 차단 시설이 중·고주파 소음을 일정 부분 감소시키고 있음',b2:'소음 발생원(타이어-노면 접촉)을 근본적으로 줄이는 포장 재료 전환이 이루어지지 않아, 방음벽으로 차단할 수 없는 저주파 소음과 회절 소음이 주거지에 전달'},
-  imp:'주간 3~5dB, 야간 5~8dB 소음 저감으로 민원 60% 감소',
-  det:'올림픽대로 잠실구간은 일 8.5만대의 대교통량 도로가 잠실 아파트단지 바로 옆을 지나며, 연간 23건의 소음 민원이 접수되고 있습니다. 기존 방음벽은 직선 경로 소음만 차단할 뿐 회절·반사 소음에는 한계가 있습니다. SMA(Stone Mastic Asphalt) 또는 고무칩 혼합 저소음 포장 적용 시 노면-타이어 접촉 소음을 원천적으로 3~8dB 저감할 수 있으며, 이는 체감 소음량 약 50% 감소에 해당합니다.'}},
-{id:4,n:'북악스카이웨이',la:37.593,lo:126.967,t:'drain',sl:8.1,rn:38,ac:5,sc:91,tr:12000,im:30,fl:0,cm:1,
- ds:'급경사 8.1% + 커브 연속',
- ai:{rec:'배수성',rs:91,urg:'긴급',roi:5.1,cost:5.8,
-  kf:['경사도 8.1%로 서울시 관내 도로 중 최고 수준','연속 커브 구간에서 수막 형성 시 조향 제어 불가','겨울철 결빙과 여름철 폭우가 교대로 포장 손상 가속'],
-  n:{n:'북악스카이웨이에 배수성 포장이 시급하다',b1:'정기 순찰과 우천 시 속도 제한 등 운영 관리로 사고를 일정 부분 억제하고 있음',b2:'경사 8.1%의 연속 커브 구간에서 노면 배수가 구조적으로 불가능한 구간이며, 포장면 자체의 배수 성능 없이는 수막현상을 원천 차단할 수 없음'},
-  imp:'수막현상 90% 해소, 우천 사고 5건→2건 감소',
-  det:'북악스카이웨이는 경사도 8.1%로 서울시 관내 도로 중 최고 수준이며, 연속 S자 커브가 이어지는 구간입니다. 비가 내리면 경사면을 따라 물이 빠르게 흘러 수막이 형성되고, 커브 구간에서 차량 제어가 극도로 어려워집니다. 다공성 아스팔트(배수성 포장)는 포장체 내부로 물을 즉시 흡수하여 수막을 원천 제거합니다. 또한 겨울철 블랙아이스 형성도 억제하여 연중 안전성이 크게 향상됩니다.'}},
-{id:5,n:'신림역 일대',la:37.484,lo:126.929,t:'perm',sl:2.1,rn:40,ac:4,sc:88,tr:45000,im:85,fl:6,cm:5,
- ds:'관악산 유수 + 침수 반복',
- ai:{rec:'투수성',rs:88,urg:'높음',roi:6.2,cost:3.8,
-  kf:['관악산 유수가 도시 저지대로 집중 유입되는 구조','10년간 침수 6회로 서울시 최다 침수 지역 중 하나','불투수면율 85%로 자연 침투 거의 불가능'],
-  n:{n:'신림역 일대에 투수성 포장이 필요하다',b1:'관악산 하단 배수로 정비와 빗물펌프장으로 일반 강우에 대응하고 있음',b2:'산지 유수량과 도시 불투수면의 결합 효과를 고려한 포장 전환 계획이 부재하여, 극한 강수 시 보행로 자체가 유출 경로가 되는 문제를 해결하지 못함'},
-  imp:'침수 피해 6회→2회로 감소, 지하수 함양 증대',
-  det:'신림역 일대는 관악산에서 흘러내린 유수가 도시 저지대로 집중되는 지형적 특성으로, 10년간 6회의 침수 피해가 발생한 취약 지역입니다. 불투수면율 85%로 빗물이 땅에 스며들 여지가 거의 없습니다. 투수성 보도블록과 투수 콘크리트를 보행로에 적용하면 시간당 300mm 이상의 침투 능력을 확보하여 지표 유출량을 크게 줄일 수 있습니다. 이는 하수도 용량 보완, 도시 열섬 완화 효과도 함께 제공합니다.'}},
-{id:6,n:'인왕산터널 진입',la:37.581,lo:126.958,t:'drain',sl:5.4,rn:40,ac:6,sc:88,tr:28000,im:45,fl:1,cm:2,
- ds:'터널 진출입 경사 + 노면 온도차',
- ai:{rec:'배수성',rs:88,urg:'높음',roi:4.5,cost:5.2,
-  kf:['터널 진출입부 경사 5.4%에서 급격한 노면 온도차 발생','외부→터널 진입 시 습윤→건조 노면 전환으로 마찰계수 급변','연 6건의 우천 시 사고 중 4건이 터널 입구 100m 이내 집중'],
-  n:{n:'인왕산터널 진입로에 배수성 포장이 필요하다',b1:'터널 내 환기·조명 시스템과 진입부 감속 유도 시설이 기본적인 안전을 확보하고 있음',b2:'터널 외부 노면의 수막과 내부 건조 노면 간 마찰계수 급변 구간에 대한 포장 재료 차별화가 이루어지지 않아, 진입부 수막현상 해소가 구조적으로 불가능'},
-  imp:'터널 진입부 사고 4건→1건 감소, 수막 해소',
-  det:'인왕산터널 진입로는 경사 5.4%에서 터널 내외부의 노면 온도차가 크게 발생하는 구간입니다. 비가 내릴 때 터널 외부는 젖어 있지만 내부는 건조하여, 진입 순간 타이어 마찰계수가 급변합니다. 이 구간에 배수성 포장을 적용하면 터널 진입 전 수막을 완전히 제거하여 마찰계수 급변 문제를 원천적으로 해결할 수 있습니다. 실제 사고 6건 중 4건이 진입부 100m 구간에 집중되어 있어 선택적 시공의 비용 효율이 매우 높습니다.'}},
-{id:7,n:'내부순환 정릉',la:37.605,lo:127.008,t:'quiet',sl:1.5,rn:33,ac:3,sc:87,tr:62000,im:70,fl:1,cm:18,
- ds:'주거밀집 + 야간 화물차 소음',
- ai:{rec:'저소음',rs:87,urg:'높음',roi:3.5,cost:5.6,
-  kf:['일 6.2만대 통행 중 야간 화물차 비율 15%로 저주파 소음 심각','주거 밀집 지역 직접 통과로 야간 수면 장애 유발','연간 18건 소음 민원으로 주민 갈등 지속'],
-  n:{n:'내부순환 정릉구간에 저소음 포장이 필요하다',b1:'야간 화물차 통행 제한과 방음벽 설치로 소음을 일정 부분 차단하고 있음',b2:'대형 화물차의 저주파 소음은 방음벽을 회절하여 주거지에 전달되며, 노면-타이어 접촉 소음 자체를 줄이는 포장 재료 전환 없이는 근본적 해결이 불가능'},
-  imp:'야간 소음 5~7dB 저감, 민원 60% 감소 기대',
-  det:'내부순환 정릉구간은 일 6.2만대가 통행하며, 야간 화물차 비율이 15%에 달해 저주파 소음이 심각합니다. 연간 18건의 소음 민원이 접수되어 주민과의 갈등이 지속되고 있습니다. 저소음 포장(SMA 또는 고무칩 혼합)은 타이어-노면 접촉 소음을 원천적으로 줄여 방음벽의 한계를 보완합니다. 특히 야간 대형차량의 저주파 소음 저감에 효과적이며 체감 소음 50% 감소가 기대됩니다.'}},
-{id:8,n:'동작대교 남단 램프',la:37.505,lo:126.982,t:'drain',sl:4.8,rn:44,ac:7,sc:86,tr:55000,im:65,fl:2,cm:4,
- ds:'교량 접속부 경사 + 수막',
- ai:{rec:'배수성',rs:86,urg:'높음',roi:3.9,cost:5.4,
-  kf:['교량-육지 접속부 경사 4.8%에서 배수 구조 취약','연 44회 폭우로 서울시 최고 강수 빈도 구간','우천 시 7건/년 사고로 합류부 위험 극심'],
-  n:{n:'동작대교 남단 램프에 배수성 포장이 필요하다',b1:'교량 배수구와 노면 정비로 일반 강수 시 기본적 배수가 이루어지고 있음',b2:'교량-램프 접속부의 구조적 경사와 배수구 용량 한계로, 시간당 30mm 이상 강우 시 수막이 불가피하게 형성되며 포장 자체의 배수 기능이 부재'},
-  imp:'접속부 수막 해소, 우천 사고 7건→3건 감소',
-  det:'동작대교 남단 램프는 교량과 육지의 접속부로 경사 4.8%의 하향 구간이며, 연 44회로 서울시 최고 수준의 폭우 빈도를 보입니다. 교량 위 물이 경사를 따라 램프로 집중 유입되어 수막이 두껍게 형성됩니다. 배수성 포장 적용 시 노면 위 물이 포장체 내부로 즉시 흡수되어 수막을 제거합니다. 특히 합류부에서의 급제동 상황에서 제동 거리가 30% 단축되는 효과가 기대됩니다.'}},
-{id:9,n:'한남대교 북단 IC',la:37.534,lo:127.001,t:'drain',sl:4.2,rn:41,ac:9,sc:85,tr:68000,im:60,fl:1,cm:5,
- ds:'IC 램프 + 합류부 사고 다발',
- ai:{rec:'배수성',rs:85,urg:'높음',roi:4.8,cost:4.8,
-  kf:['IC 램프 경사 4.2%에서 합류 차량의 급가속·급제동','우천 시 사고 9건/년으로 서울시 IC 중 최다','일 6.8만대 대교통량으로 사고 시 광역 교통마비'],
-  n:{n:'한남대교 북단 IC에 배수성 포장이 필요하다',b1:'합류부 가속차로 길이 확보와 시선 유도 시설로 합류 안전성을 일정 수준 확보하고 있음',b2:'IC 램프의 곡선+경사 복합 구간에서 우천 시 수막으로 인한 마찰력 저하가 사고의 직접 원인이나, 노면 배수 성능 개선 없이 교통 시설물만으로는 한계'},
-  imp:'우천 사고 9건→4건 감소, IC 합류부 안전성 대폭 향상',
-  det:'한남대교 북단 IC는 경사 4.2%의 곡선 램프에서 본선으로 합류하는 구간으로, 우천 시 연간 9건의 사고가 발생하여 서울시 IC 중 최다입니다. 합류 시 급가속이 필요한 구간에서 수막으로 타이어 접지력이 급감하면 차량 제어가 불가능합니다. 배수성 포장은 합류 가속 구간의 수막을 제거하여 타이어 접지력을 정상 수준으로 유지합니다. 일 6.8만대 이용 도로이므로 사고 1건 감소의 사회적 편익이 매우 큽니다.'}},
-{id:10,n:'사당역 일대',la:37.477,lo:126.982,t:'perm',sl:1.8,rn:39,ac:3,sc:85,tr:48000,im:88,fl:4,cm:6,
- ds:'저지대 + 불투수면 88%',
- ai:{rec:'투수성',rs:85,urg:'높음',roi:5.0,cost:3.6,
-  kf:['남태령 고개에서 내려오는 유수가 저지대에 집중','불투수면율 88%로 빗물 침투 거의 불가','10년간 4회 침수로 상습 피해 지역'],
-  n:{n:'사당역 일대에 투수성 포장이 필요하다',b1:'하수도 정비와 우수 저류조 설치로 일반 강수량에 대응하고 있음',b2:'남태령-사당 지형적 유수 집중 구간에서 불투수면 88%의 보행로가 유출을 가속시키며, 포장 자체의 침투 기능 없이는 극한 강수 시 침수를 구조적으로 방지할 수 없음'},
-  imp:'침수 피해 4회→1회 감소, 보행환경 및 도시 열섬 개선',
-  det:'사당역 일대는 남태령 고개에서 내려온 물이 저지대로 집중되는 지형적 특성을 가지고 있으며, 불투수면율 88%로 빗물 침투가 거의 불가능합니다. 10년간 4회의 침수 피해가 반복되었습니다. 보행로를 투수성 블록으로 전환하면 시간당 300mm 이상의 침투율을 확보하여 지표 유출량을 크게 줄일 수 있습니다. 동시에 도시 열섬 완화와 지하수 함양 효과를 제공합니다.'}},
-{id:11,n:'강변북로 성수',la:37.542,lo:127.044,t:'quiet',sl:0.5,rn:34,ac:3,sc:84,tr:78000,im:72,fl:2,cm:15,
- ds:'성수동 주거 인접',ai:{rec:'저소음',rs:84,urg:'높음',roi:3.2,cost:5.8,kf:['일 7.8만대 통행으로 지속적 소음 발생','성수동 주거지역과 직접 인접','연간 15건 소음 민원 접수'],n:{n:'강변북로 성수구간에 저소음 포장이 필요하다',b1:'방음벽과 녹지 완충대가 일정 수준의 소음 차단 효과를 제공하고 있음',b2:'성수동 재개발로 주거 인구가 급증하면서 기존 방음시설의 용량이 포화되었으며, 노면 소음 자체의 저감 없이는 증가하는 민원에 대응 불가'},imp:'소음 3~5dB 저감으로 민원 50% 감소 기대',det:'강변북로 성수구간은 일 7.8만대가 통행하는 대교통량 도로로, 성수동 주거지역과 직접 인접하여 연간 15건의 소음 민원이 접수되고 있습니다. 최근 성수동 재개발로 주거 인구가 급증하면서 소음 문제가 더욱 심화되고 있습니다. 저소음 포장 적용 시 타이어-노면 소음을 3~5dB 저감하여 방음벽과 시너지 효과를 낼 수 있습니다.'}},
-{id:12,n:'우면산터널 접속부',la:37.475,lo:126.989,t:'drain',sl:4.5,rn:43,ac:6,sc:83,tr:42000,im:55,fl:3,cm:3,
- ds:'터널 + 2011 산사태 이력',ai:{rec:'배수성',rs:83,urg:'높음',roi:4.0,cost:5.0,kf:['2011년 산사태 이후 토질 불안정으로 배수 취약','터널 접속부 경사 4.5%에서 수막 형성','연 43회 폭우로 산사태 재발 우려'],n:{n:'우면산터널 접속부에 배수성 포장이 필요하다',b1:'산사태 이후 사면 보강과 배수로 정비로 안정성이 향상되었음',b2:'터널 접속부 노면 자체의 배수 성능이 없어 폭우 시 수막이 형성되며, 산사태 이력 지역의 추가 유수량에 대응하는 포장 전환이 이루어지지 않음'},imp:'수막 해소 + 사면 유수 분산으로 복합 안전성 향상',det:'우면산터널 접속부는 2011년 대규모 산사태 이후 사면 보강이 이루어졌으나, 터널 진출입부 경사 4.5% 구간의 노면 배수 문제는 미해결 상태입니다. 연 43회의 폭우가 발생하며, 산사태 이력 지역의 추가 유수가 노면으로 유입되어 수막을 악화시킵니다. 배수성 포장은 노면 수막 제거와 함께 사면 유수의 분산 배수 기능을 보조하여 복합적인 안전성 향상을 제공합니다.'}},
-{id:13,n:'광화문 일대',la:37.572,lo:126.977,t:'perm',sl:0.5,rn:36,ac:2,sc:82,tr:25000,im:95,fl:3,cm:4,
- ds:'불투수면 95% + 보행공간',ai:{rec:'투수성',rs:82,urg:'높음',roi:3.5,cost:4.0,kf:['불투수면율 95%로 서울시 최고 수준','역사문화 핵심 공간의 보행환경 품질 요구','10년간 3회 침수로 문화재 인접 피해 우려'],n:{n:'광화문 일대 보행공간에 투수성 포장이 필요하다',b1:'광화문광장 재조성 등 보행환경 개선 사업이 진행되고 있음',b2:'불투수면 95%의 극도로 포장된 공간에서 우수 침투 기능이 전무하며, 광장 재조성 시에도 포장 재료 자체의 투수 성능이 고려되지 않음'},imp:'우수 침투율 60% 확보, 도시 열섬 2~3°C 저감',det:'광화문 일대는 불투수면율 95%로 서울시에서 가장 높은 수준이며, 경복궁 등 문화재 인접 지역으로 침수 시 피해가 우려됩니다. 광화문광장 재조성과 연계하여 보행로를 투수성 블록으로 전환하면 우수 침투와 도시 경관 개선을 동시에 달성할 수 있습니다. 특히 여름철 도시 열섬 효과를 2~3°C 완화하는 부수 효과가 있습니다.'}},
-{id:14,n:'강남대로 역삼',la:37.501,lo:127.037,t:'quiet',sl:1.0,rn:37,ac:4,sc:82,tr:72000,im:80,fl:2,cm:20,
- ds:'상업+주거 야간소음',ai:{rec:'저소음',rs:82,urg:'높음',roi:3.0,cost:5.4,kf:['일 7.2만대 통행의 상업-주거 혼합 지역','야간 소음으로 주거 지역 수면 장애','연간 20건 민원으로 지속적 민원 발생'],n:{n:'강남대로 역삼구간에 저소음 포장이 필요하다',b1:'속도 제한과 방음벽으로 소음을 일정 수준 관리하고 있음',b2:'상업-주거 혼합 지역 특성상 방음벽 설치에 제약이 크며, 야간에도 교통량이 많아 노면 소음 자체를 줄이지 않으면 주거 환경 개선이 불가능'},imp:'소음 3~6dB 저감, 야간 민원 60% 감소 기대',det:'강남대로 역삼구간은 일 7.2만대가 통행하는 대로이면서, 이면 도로에 주거 건물이 밀집한 상업-주거 혼합 지역입니다. 야간에도 교통량이 줄지 않아 연간 20건의 소음 민원이 접수됩니다. 상업 지구 특성상 방음벽 설치가 어려워 노면 자체의 소음을 줄이는 저소음 포장이 가장 현실적인 대안입니다.'}},
-{id:15,n:'양재대로 서초',la:37.483,lo:127.024,t:'quiet',sl:1.3,rn:36,ac:3,sc:81,tr:68000,im:78,fl:1,cm:16,
- ds:'서초 주거 + 대형차량',ai:{rec:'저소음',rs:81,urg:'보통',roi:2.8,cost:5.0,kf:['일 6.8만대 통행 중 대형차량 비율 높음','서초 주거 단지 인접으로 소음 피해','연간 16건 민원 접수'],n:{n:'양재대로 서초구간에 저소음 포장이 필요하다',b1:'방음벽과 녹지대로 소음을 일정 수준 감소시키고 있음',b2:'대형차량의 저주파 소음은 방음벽을 우회하여 주거지에 전달되며, 포장 재료 전환 없이는 소음원 자체를 줄일 수 없음'},imp:'소음 3~5dB 저감, 민원 50% 감소',det:'양재대로 서초구간은 일 6.8만대 통행량에 대형차량 비율이 높아 저주파 소음이 문제입니다. 서초 주거 단지가 인접하여 연간 16건의 민원이 발생합니다. 저소음 포장은 대형차량의 타이어-노면 소음을 효과적으로 저감하여 방음벽의 한계를 보완합니다.'}},
-{id:16,n:'성산대교 남단',la:37.548,lo:126.912,t:'drain',sl:3.8,rn:39,ac:5,sc:80,tr:52000,im:60,fl:1,cm:4,
- ds:'교량 접속 경사',ai:{rec:'배수성',rs:80,urg:'보통',roi:3.5,cost:4.6,kf:['교량 접속부 경사 3.8%에서 풍속 영향 가중','한강 상부 풍속으로 빗물 비산 및 시인성 저하','우천 시 5건/년 사고 발생'],n:{n:'성산대교 남단에 배수성 포장이 필요하다',b1:'교량 배수 시설과 감속 유도로 기본 안전을 확보하고 있음',b2:'한강 위 강풍과 경사의 복합 작용으로 빗물이 비산하여 시인성이 극도로 저하되며, 노면 배수 성능 없이는 이를 해소할 수 없음'},imp:'수막 해소 및 빗물 비산 저감으로 시인성 향상',det:'성산대교 남단은 교량 접속부 경사 3.8%에 한강 위 강풍이 더해져 비가 올 때 빗물이 비산하고 시인성이 극도로 저하됩니다. 배수성 포장은 빗물을 포장체 내부로 흡수하여 비산을 방지하고 야간 전조등 반사도 억제합니다.'}},
-{id:17,n:'동부간선 장한평',la:37.562,lo:127.065,t:'quiet',sl:0.8,rn:32,ac:2,sc:79,tr:55000,im:68,fl:1,cm:12,
- ds:'아파트 + 터널 소음',ai:{rec:'저소음',rs:79,urg:'보통',roi:2.5,cost:4.8,kf:['터널 내 반사 소음이 아파트 밀집 지역에 집중','일 5.5만대 통행으로 상시 소음','연간 12건 민원'],n:{n:'동부간선 장한평구간에 저소음 포장이 필요하다',b1:'터널 내 흡음재 설치로 일정 수준의 소음 감소 효과가 있음',b2:'터널 내부 소음이 개구부를 통해 인접 아파트에 직접 전달되며, 노면 소음 자체를 줄이지 않으면 흡음재만으로는 한계'},imp:'터널 반사 소음 포함 4~6dB 저감',det:'동부간선 장한평구간은 터널 내 소음이 반사·증폭되어 개구부 인근 아파트 밀집 지역에 직접 전달되는 구조입니다. 저소음 포장은 터널 내 소음 발생 자체를 줄여 흡음재와 시너지 효과를 냅니다.'}},
-{id:18,n:'관악산 서울대입구',la:37.464,lo:126.952,t:'drain',sl:7.5,rn:36,ac:4,sc:78,tr:18000,im:40,fl:2,cm:2,
- ds:'산지 7.5% + 배수 불량',ai:{rec:'배수성',rs:78,urg:'보통',roi:3.8,cost:4.2,kf:['경사도 7.5%로 수막현상 위험 극심','산지 도로 배수 구조 취약','이면도로 배수 불량으로 노면 체수 발생'],n:{n:'관악산 서울대입구 구간에 배수성 포장이 필요하다',b1:'도로 측구와 배수로로 기본 배수가 이루어지고 있음',b2:'경사 7.5%의 산지 도로에서 측구 배수만으로는 노면 수막을 제거할 수 없으며, 포장체 자체의 배수 기능이 없어 폭우 시 위험 노출'},imp:'수막현상 85% 해소, 산지 도로 안전성 향상',det:'관악산 서울대입구 구간은 경사도 7.5%의 산지 도로로, 비가 오면 물이 경사면을 타고 빠르게 흘러 두꺼운 수막이 형성됩니다. 배수성 포장 적용 시 수막을 원천 제거하여 산지 도로의 안전성을 크게 향상시킬 수 있습니다.'}},
-{id:19,n:'도림천 주변 보도',la:37.495,lo:126.903,t:'perm',sl:0.8,rn:38,ac:1,sc:77,tr:15000,im:80,fl:4,cm:3,
- ds:'하천변 침수 취약',ai:{rec:'투수성',rs:77,urg:'보통',roi:4.5,cost:2.8,kf:['하천 인접 저지대로 월류 시 직접 침수','불투수면율 80%로 자연 배수 불가','10년간 4회 침수 피해'],n:{n:'도림천 주변 보행로에 투수성 포장이 필요하다',b1:'하천 제방 정비로 일반 수위에서의 안전이 확보되어 있음',b2:'극한 강수 시 하천 월류와 보행로 불투수면의 결합으로 침수가 가속되며, 보행로 포장의 투수 전환 없이는 월류수 분산이 불가능'},imp:'침수 피해 4회→1회 감소, 하천변 생태 환경 개선',det:'도림천 주변 보행로는 하천 인접 저지대로 월류 시 직접 침수 피해를 받는 구간입니다. 투수성 블록으로 전환하면 우수가 지반으로 침투하여 하천으로의 급속 유입을 완화하고, 도시 열섬 저감과 생태 환경 개선 효과도 기대됩니다.'}},
-{id:20,n:'서부간선 신길',la:37.508,lo:126.915,t:'quiet',sl:0.6,rn:35,ac:3,sc:76,tr:48000,im:72,fl:1,cm:14,
- ds:'주거밀집 + 화물차',ai:{rec:'저소음',rs:76,urg:'보통',roi:2.5,cost:4.2,kf:['주거 밀집 지역 관통 도로','화물차 비율 높아 저주파 소음 문제','연간 14건 민원'],n:{n:'서부간선 신길구간에 저소음 포장이 필요하다',b1:'방음벽과 속도 제한으로 소음을 관리하고 있음',b2:'화물차 저주파 소음은 방음벽을 회절하여 전달되며, 노면 소음 저감 없이는 주거 환경 개선이 어려움'},imp:'소음 3~5dB 저감, 민원 50% 감소',det:'서부간선 신길구간은 주거 밀집 지역을 관통하며 화물차 비율이 높아 저주파 소음이 문제입니다. 저소음 포장으로 타이어-노면 소음을 줄이면 기존 방음벽과 시너지 효과를 낼 수 있습니다.'}},
-{id:21,n:'대모산 진입로',la:37.482,lo:127.065,t:'drain',sl:5.8,rn:35,ac:3,sc:74,tr:8000,im:25,fl:0,cm:1,
- ds:'산지 경사 + 낙엽',ai:{rec:'배수성',rs:74,urg:'보통',roi:3.2,cost:3.5,kf:['경사도 5.8%의 산지 도로','가을철 낙엽+빗물 복합 미끄럼','배수 구조 미비'],n:{n:'대모산 진입로에 배수성 포장이 필요하다',b1:'정기 낙엽 제거와 노면 정비로 기본 관리가 이루어지고 있음',b2:'경사 5.8% 산지 도로에서 낙엽과 빗물의 복합 미끄럼을 포장 재료 수준에서 해결하지 못하고 있음'},imp:'수막+낙엽 복합 미끄럼 위험 70% 감소',det:'대모산 진입로는 경사 5.8%의 산지 도로로 가을철 낙엽과 빗물이 합쳐지면 극도로 미끄러운 노면이 됩니다. 배수성 포장은 수막을 제거하고 낙엽이 포장면에 밀착되는 것을 방지하여 복합 미끄럼 위험을 크게 줄입니다.'}},
-{id:22,n:'북부간선 월계',la:37.625,lo:127.052,t:'quiet',sl:0.7,rn:31,ac:2,sc:73,tr:45000,im:65,fl:1,cm:11,
- ds:'아파트 옆 고가도로',ai:{rec:'저소음',rs:73,urg:'보통',roi:2.2,cost:4.0,kf:['고가도로 구조로 소음이 상방 확산','아파트 단지 바로 옆 통과','연간 11건 민원'],n:{n:'북부간선 월계구간에 저소음 포장이 필요하다',b1:'방음벽이 설치되어 일정 수준의 차음 효과가 있음',b2:'고가도로 구조 특성상 소음이 상방으로 확산되어 방음벽 상단을 넘어 아파트 고층에 전달되며, 노면 소음 자체를 줄이지 않으면 해결 불가'},imp:'소음 3~5dB 저감, 고층 아파트 소음 피해 감소',det:'북부간선 월계구간은 고가도로가 아파트 단지 바로 옆을 지나며, 고가 구조 특성상 소음이 상방 확산되어 방음벽 상단을 넘어 고층 가구에 전달됩니다. 저소음 포장은 소음 발생 자체를 줄여 이 구조적 한계를 보완합니다.'}},
-{id:23,n:'중랑천 변 보도',la:37.575,lo:127.048,t:'perm',sl:0.4,rn:33,ac:1,sc:72,tr:12000,im:78,fl:3,cm:2,
- ds:'하천변 월류 이력',ai:{rec:'투수성',rs:72,urg:'보통',roi:4.0,cost:2.4,kf:['중랑천 월류 시 보행로 직접 침수','불투수면율 78%로 자연 침투 부족','10년간 3회 월류 침수'],n:{n:'중랑천 변 보행로에 투수성 포장이 필요하다',b1:'하천 제방과 배수 시설로 일반 수위에서의 안전이 확보되어 있음',b2:'극한 강수 시 월류수가 불투수 보행로 위에 체류하며, 포장 자체의 침투 기능 없이는 월류수 분산이 불가능'},imp:'월류 침수 피해 3회→1회 감소',det:'중랑천 변 보행로는 극한 강수 시 하천 월류로 직접 침수 피해를 받습니다. 투수성 블록 전환으로 월류수의 지반 침투를 유도하여 체류 시간과 피해를 줄일 수 있으며, 하천변 생태 환경 개선에도 기여합니다.'}}
+{id:1,n:'남산 순환로',la:37.5512,lo:126.9882,t:'drain',sl:6.2,rn:42,ac:8,sc:95,tr:35000,im:60,fl:1,cm:3,ds:'급경사 6.2% + 연 42회 폭우 + 우천사고 8건/년'},
+{id:2,n:'강남역 일대',la:37.4979,lo:127.0276,t:'perm',sl:1.2,rn:38,ac:3,sc:94,tr:72000,im:92,fl:5,cm:8,ds:'불투수면 92% + 침수 5회/10년'},
+{id:3,n:'올림픽대로 잠실',la:37.518,lo:127.075,t:'quiet',sl:0.8,rn:35,ac:4,sc:92,tr:85000,im:75,fl:2,cm:23,ds:'일 8.5만대 + 잠실아파트 인접'},
+{id:4,n:'북악스카이웨이',la:37.593,lo:126.967,t:'drain',sl:8.1,rn:38,ac:5,sc:91,tr:12000,im:30,fl:0,cm:1,ds:'급경사 8.1% + 커브 연속'},
+{id:5,n:'신림역 일대',la:37.484,lo:126.929,t:'perm',sl:2.1,rn:40,ac:4,sc:88,tr:45000,im:85,fl:6,cm:5,ds:'관악산 유수 + 침수 반복'},
+{id:6,n:'인왕산터널 진입',la:37.581,lo:126.958,t:'drain',sl:5.4,rn:40,ac:6,sc:88,tr:28000,im:45,fl:1,cm:2,ds:'터널 진출입 경사 + 노면 온도차'},
+{id:7,n:'내부순환 정릉',la:37.605,lo:127.008,t:'quiet',sl:1.5,rn:33,ac:3,sc:87,tr:62000,im:70,fl:1,cm:18,ds:'주거밀집 + 야간 화물차 소음'},
+{id:8,n:'동작대교 남단 램프',la:37.505,lo:126.982,t:'drain',sl:4.8,rn:44,ac:7,sc:86,tr:55000,im:65,fl:2,cm:4,ds:'교량 접속부 경사 + 수막'},
+{id:9,n:'한남대교 북단 IC',la:37.534,lo:127.001,t:'drain',sl:4.2,rn:41,ac:9,sc:85,tr:68000,im:60,fl:1,cm:5,ds:'IC 램프 + 합류부 사고 다발'},
+{id:10,n:'사당역 일대',la:37.477,lo:126.982,t:'perm',sl:1.8,rn:39,ac:3,sc:85,tr:48000,im:88,fl:4,cm:6,ds:'저지대 + 불투수면 88%'},
+{id:11,n:'강변북로 성수',la:37.542,lo:127.044,t:'quiet',sl:0.5,rn:34,ac:3,sc:84,tr:78000,im:72,fl:2,cm:15,ds:'성수동 주거 인접'},
+{id:12,n:'우면산터널 접속부',la:37.475,lo:126.989,t:'drain',sl:4.5,rn:43,ac:6,sc:83,tr:42000,im:55,fl:3,cm:3,ds:'터널 + 2011 산사태 이력'},
+{id:13,n:'광화문 일대',la:37.572,lo:126.977,t:'perm',sl:0.5,rn:36,ac:2,sc:82,tr:25000,im:95,fl:3,cm:4,ds:'불투수면 95% + 보행공간'},
+{id:14,n:'강남대로 역삼',la:37.501,lo:127.037,t:'quiet',sl:1.0,rn:37,ac:4,sc:82,tr:72000,im:80,fl:2,cm:20,ds:'상업+주거 야간소음'},
+{id:15,n:'양재대로 서초',la:37.483,lo:127.024,t:'quiet',sl:1.3,rn:36,ac:3,sc:81,tr:68000,im:78,fl:1,cm:16,ds:'서초 주거 + 대형차량'},
+{id:16,n:'성산대교 남단',la:37.548,lo:126.912,t:'drain',sl:3.8,rn:39,ac:5,sc:80,tr:52000,im:60,fl:1,cm:4,ds:'교량 접속 경사'},
+{id:17,n:'동부간선 장한평',la:37.562,lo:127.065,t:'quiet',sl:0.8,rn:32,ac:2,sc:79,tr:55000,im:68,fl:1,cm:12,ds:'아파트 + 터널 소음'},
+{id:18,n:'관악산 서울대입구',la:37.464,lo:126.952,t:'drain',sl:7.5,rn:36,ac:4,sc:78,tr:18000,im:40,fl:2,cm:2,ds:'산지 7.5% + 배수 불량'},
+{id:19,n:'도림천 주변 보도',la:37.495,lo:126.903,t:'perm',sl:0.8,rn:38,ac:1,sc:77,tr:15000,im:80,fl:4,cm:3,ds:'하천변 침수 취약'},
+{id:20,n:'서부간선 신길',la:37.508,lo:126.915,t:'quiet',sl:0.6,rn:35,ac:3,sc:76,tr:48000,im:72,fl:1,cm:14,ds:'주거밀집 + 화물차'},
+{id:21,n:'대모산 진입로',la:37.482,lo:127.065,t:'drain',sl:5.8,rn:35,ac:3,sc:74,tr:8000,im:25,fl:0,cm:1,ds:'산지 경사 + 낙엽'},
+{id:22,n:'북부간선 월계',la:37.625,lo:127.052,t:'quiet',sl:0.7,rn:31,ac:2,sc:73,tr:45000,im:65,fl:1,cm:11,ds:'아파트 옆 고가도로'},
+{id:23,n:'중랑천 변 보도',la:37.575,lo:127.048,t:'perm',sl:0.4,rn:33,ac:1,sc:72,tr:12000,im:78,fl:3,cm:2,ds:'하천변 월류 이력'}
 ];
 D.sort(function(a,b){return b.sc-a.sc;});
+
+// ===== 백엔드 상태 확인 =====
+function checkStatus(){
+    fetch('/api/status').then(function(r){return r.json();}).then(function(d){
+        setDot('ai',d.claude_ai==='connected'?'live':'off');
+        setDot('wx',d.weather==='connected'?'live':(d.weather==='sample'?'sample':'off'));
+        setDot('ta',d.taas==='connected'?'live':(d.taas==='sample'?'sample':'off'));
+        setDot('dm',d.dem==='connected'?'live':(d.dem==='sample'?'sample':'off'));
+        AI_MODE = d.claude_ai==='connected' ? 'live' : 'offline';
+        var b=document.getElementById('aiBadge');
+        if(AI_MODE==='live'){b.className='badge b-g';b.textContent='AI 실시간';}
+        else{b.className='badge b-y';b.textContent='AI 오프라인';}
+    }).catch(function(){
+        AI_MODE='offline';
+        setDot('ai','off');setDot('wx','off');setDot('ta','off');setDot('dm','off');
+        var b=document.getElementById('aiBadge');b.className='badge b-y';b.textContent='AI 오프라인';
+    });
+}
+function setDot(id,st){
+    var d=document.getElementById('d-'+id),s=document.getElementById('s-'+id);
+    if(st==='live'){d.style.background='#22c55e';s.style.color='#22c55e';s.textContent='실시간';}
+    else if(st==='sample'){d.style.background='#f59e0b';s.style.color='#f59e0b';s.textContent='샘플';}
+    else{d.style.background='#666';s.style.color='#666';s.textContent='미연결';}
+}
+setTimeout(checkStatus,500);
 
 // ===== 지도 =====
 var map=L.map('map',{zoomControl:false}).setView([37.5665,126.978],12);
 L.control.zoom({position:'topright'}).addTo(map);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{
     attribution:'&copy; OSM &copy; CARTO',subdomains:'abcd',maxZoom:19}).addTo(map);
 
 var ML={drain:L.layerGroup().addTo(map),quiet:L.layerGroup().addTo(map),perm:L.layerGroup().addTo(map)};
@@ -301,14 +247,14 @@ D.forEach(function(s,i){
     h+='<div class="pr"><span class="k">침수이력</span><span class="v">'+s.fl+'회/10년</span></div></div>';
     h+='<div class="pd">'+s.ds+'</div>';
     h+='<button class="pb" onclick="analyze('+i+')">🤖 AI N2B 종합 분석</button>';
-    h+='<div class="ps">23개 구간 전문가 분석 내장</div>';
+    h+='<div class="ps" id="modeHint">'+( AI_MODE==='live'?'Claude AI 실시간 분석':'N2B 전문가 분석')+'</div>';
     var mk=L.marker([s.la,s.lo],{icon:ic}).bindPopup(h,{maxWidth:260,minWidth:220});
     var cr=L.circle([s.la,s.lo],{radius:s.sc>=90?400:s.sc>=80?300:200,color:c,fillColor:c,fillOpacity:.06,weight:1,opacity:.2});
     ML[s.t].addLayer(mk);ML[s.t].addLayer(cr);
     MK.push({m:mk,c:cr,s:s,i:i});
 });
 
-function tog(el){var t=el.getAttribute('data-t');vis[t]=vis[t]?0:1;el.classList.toggle('on',!!vis[t]);el.querySelector('.dt').style.background=vis[t]?COL[t]:'#333';if(vis[t])map.addLayer(ML[t]);else map.removeLayer(ML[t]);}
+function tog(el){var t=el.getAttribute('data-t');vis[t]=vis[t]?0:1;el.classList.toggle('on',!!vis[t]);el.querySelector('.dot').style.background=vis[t]?COL[t]:'#333';if(vis[t])map.addLayer(ML[t]);else map.removeLayer(ML[t]);}
 
 var li=document.getElementById('list');
 D.slice(0,10).forEach(function(s,i){
@@ -318,41 +264,87 @@ D.slice(0,10).forEach(function(s,i){
     li.appendChild(d);
 });
 
-// ===== AI 분석 (내장 데이터 즉시 표시) =====
+// ===== AI 분석 =====
+var curIdx=null;
 function analyze(idx){
-    var s=D[idx],a=s.ai,p=document.getElementById('aiP'),ct=document.getElementById('aiC');
+    var s=D[idx]; curIdx=idx;
+    var p=document.getElementById('aiP'),ct=document.getElementById('aiC');
     document.getElementById('aiN').textContent=TI[s.t]+' '+s.n;
-    p.classList.add('show');map.closePopup();
+    p.classList.add('show'); map.closePopup();
 
-    // 로딩 애니메이션 (0.8초 후 결과 표시)
-    ct.innerHTML='<div class="al"><div class="sp">🤖</div><div class="mg">AI N2B 분석 중...</div><div class="su">경사도·강수·사고·소음 4개 레이어 교차 분석</div></div>';
+    var modeLabel = AI_MODE==='live' ? '<span class="mt mt-l">🟢 Claude AI 실시간</span>' : '<span class="mt mt-o">🟡 오프라인 분석</span>';
+    ct.innerHTML='<div class="al"><div class="sp">🤖</div><div class="mg">AI N2B 분석 중...</div><div class="su">경사도·강수·사고·소음 4개 레이어 교차 분석</div><div style="margin-top:6px;">'+modeLabel+'</div></div>';
 
-    setTimeout(function(){
-        var c=COL[s.t];
-        var uc={'긴급':'#ef4444','높음':'#f59e0b','보통':'#22c55e','낮음':'#64748b'};
-        var h='<div style="text-align:center;margin-bottom:8px;"><span style="padding:2px 8px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);border-radius:10px;font-size:8px;color:#22c55e;">✅ N2B 전문가 분석 완료</span></div>';
+    if(AI_MODE==='live'){
+        // ★ FastAPI 프록시 경유 → Claude AI 실시간 호출
+        var prompt='당신은 40년 경력의 도로포장 전문가입니다. 아래 도로 조건을 N2B(Not-But-Because) 프레임워크로 분석하세요.\n\n도로 조건:\n- 위치: '+s.n+' (서울시)\n- 경사도: '+s.sl+'%\n- 연간 폭우(30mm/hr+): '+s.rn+'회\n- 우천시 사고: '+s.ac+'건/년\n- 일 교통량: '+s.tr.toLocaleString()+'대\n- 불투수면율: '+s.im+'%\n- 10년 침수: '+s.fl+'회\n- 소음민원: '+s.cm+'건/년\n\nJSON만 응답 (다른 텍스트 없이):\n{"recommendation":"배수성 또는 저소음 또는 투수성","risk_score":숫자,"urgency":"긴급|높음|보통|낮음","key_factors":["요인3개"],"n2b":{"n":"명제","b1":"BP강점","b2":"BP빈틈"},"improvement":"효과1문장","cost_억":숫자,"roi":숫자,"detail":"상세3~4문장"}';
 
-        h+='<div class="av"><div class="ll">AI 판정 결과</div><div class="re" style="color:'+c+'">'+a.rec+' 포장</div>';
-        h+='<div class="ss"><div><div class="sl">위험점수</div><div class="sv2" style="color:#f0b429">'+a.rs+'</div></div>';
-        h+='<div><div class="sl">긴급도</div><div class="sv2" style="color:'+(uc[a.urg]||'#888')+'">'+a.urg+'</div></div>';
-        h+='<div><div class="sl">ROI</div><div class="sv2" style="color:#22c55e">'+a.roi+'배</div></div></div></div>';
+        fetch('/api/analyze',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+        })
+        .then(function(r){return r.json();})
+        .then(function(d){
+            if(d.error){throw new Error(d.error);}
+            var text='';if(d.content){d.content.forEach(function(b){if(b.text)text+=b.text;});}
+            var result=JSON.parse(text.replace(/```json|```/g,'').trim());
+            renderResult(result,s,'live');
+        })
+        .catch(function(err){
+            ct.innerHTML='<div class="ae">⚠️ AI 분석 오류: '+err.message+'<br><br>app.py에서 ANTHROPIC_API_KEY를 확인하세요.</div><button class="art" style="margin-top:8px;" onclick="AI_MODE=\'offline\';analyze('+idx+')">오프라인 분석으로 전환</button>';
+        });
+    } else {
+        // 오프라인 — 내장 규칙 기반 분석
+        setTimeout(function(){renderResult(offlineAI(s),s,'offline');},1000);
+    }
+}
 
-        h+='<div class="af"><div class="ti">⚠️ 핵심 위험 요인</div>';
-        a.kf.forEach(function(f){h+='<div class="fi">'+f+'</div>';});
-        h+='</div>';
+// ===== 오프라인 분석 엔진 =====
+function offlineAI(s){
+    var factors={
+        drain:['경사도 '+s.sl+'%로 수막현상 발생 임계치(3%) '+(s.sl/3).toFixed(1)+'배 초과','연 '+s.rn+'회 집중호우 시 노면 배수 불량으로 수막 형성','우천 시 사고 '+s.ac+'건/년으로 서울시 동종 도로 대비 '+(s.ac/2.5).toFixed(1)+'배'],
+        quiet:['일 교통량 '+(s.tr/10000).toFixed(1)+'만대 수준의 고소음 구간','연간 소음 민원 '+s.cm+'건으로 주거지 피해 심각','야간 대형차량 통행으로 저주파 소음 및 수면 장애 유발'],
+        perm:['불투수면율 '+s.im+'%로 도시 열섬 및 침수 취약','10년간 침수 이력 '+s.fl+'회로 반복 피해 지역','보행 공간 우수 침투 불가로 하수 부하 가중']
+    };
+    var n2bs={
+        drain:{n:s.n+' 구간에 배수성 포장이 시급하다',b1:'현행 PMS 기반 포장 관리가 균열·소성변형 등 물리적 손상을 효과적으로 탐지하고, 전문가 현장 답사를 통한 종합 판단이 이루어지고 있음',b2:'경사도·강수빈도·사고이력 3개 레이어를 동시에 교차 분석하는 시스템이 부재하여, 수막현상 위험 구간의 사전 예방적 포장 전환 판단이 불가능'},
+        quiet:{n:s.n+' 구간에 저소음 포장이 필요하다',b1:'방음벽·방음터널 등 기존 소음 차단 시설이 중·고주파 소음을 일정 부분 감소시키고 있음',b2:'소음 발생원(타이어-노면 접촉)을 근본적으로 줄이는 포장 재료 전환이 이루어지지 않아, 방음벽으로 차단할 수 없는 저주파 소음과 회절 소음이 주거지에 전달'},
+        perm:{n:s.n+' 구간에 투수성 포장이 필요하다',b1:'하수도 확장·빗물펌프장 등 기존 배수 인프라 투자가 일반 강수량에 대응하고 있음',b2:'극한 강수 시 불투수면 '+s.im+'%의 지표면이 유출량을 감당하지 못하며, 포장 자체의 우수 침투 기능이 부재하여 근본적 침수 예방이 불가능'}
+    };
+    var cost=s.t==='drain'?Math.round(s.sc*.08*10)/10:s.t==='quiet'?Math.round(s.sc*.06*10)/10:Math.round(s.sc*.04*10)/10;
+    var roi=Math.max(2,Math.min(8,s.t==='drain'?Math.round(s.ac*1.2*10)/10:s.t==='quiet'?Math.round(s.cm*.3*10)/10:Math.round(s.fl*2.5*10)/10));
+    var urg=s.sc>=90?'긴급':s.sc>=80?'높음':s.sc>=70?'보통':'낮음';
+    var imp=s.t==='drain'?'우천 시 사고 약 '+Math.round(s.ac*.35)+'건 감소 및 수막현상 80% 해소':s.t==='quiet'?'주간 3~5dB, 야간 5~8dB 소음 저감으로 민원 60% 감소':'우수 침투율 70% 확보로 침수 피해 '+Math.round(s.fl*.6)+'회 감소';
+    var det=s.t==='drain'?s.n+'은 경사도 '+s.sl+'%에 연간 '+s.rn+'회의 집중호우가 발생하여 수막현상 위험이 매우 높습니다. 우천 시 '+s.ac+'건의 사고가 발생하며, 배수성 포장(다공성 아스팔트) 적용 시 수막 즉시 제거, 야간 시인성 향상, 소음 저감 등 복합 효과가 기대됩니다. 국내외 유사 사례에서 우천 사고율 30~40% 감소가 검증되었습니다.':s.t==='quiet'?s.n+'은 일 '+(s.tr/10000).toFixed(1)+'만대가 통행하며, 인접 주거지에서 연간 '+s.cm+'건의 소음 민원이 접수됩니다. 기존 방음벽만으로는 저주파 소음 차단에 한계가 있어, 발생원 자체를 줄이는 저소음 포장이 효과적입니다. SMA 또는 고무 혼합 저소음 포장 적용 시 3~8dB 소음 저감이 가능하며, 이는 체감 소음량 약 50% 감소에 해당합니다.':s.n+'은 불투수면율 '+s.im+'%로 서울시 상위 수준이며, 10년간 '+s.fl+'회의 침수 피해가 발생했습니다. 보행로를 투수성 블록으로 전환하면 시간당 300mm 이상의 침투 능력을 확보하여 지표 유출량을 크게 줄일 수 있습니다. 지하수 함양, 도시 열섬 완화, 하수도 부하 저감 등 다중 편익을 제공합니다.';
+    return {recommendation:TN[s.t],risk_score:s.sc,urgency:urg,key_factors:factors[s.t],n2b:n2bs[s.t],improvement:imp,cost_억:cost,roi:roi,detail:det};
+}
 
-        h+='<div class="an2"><div class="ti">🔬 N2B 프레임워크 분석</div>';
-        h+='<div class="li"><span class="ln">N:</span> '+a.n.n+'</div>';
-        h+='<div class="li"><span class="lb">B₁ (현재 BP 강점):</span><br><span style="color:#888">'+a.n.b1+'</span></div>';
-        h+='<div class="li"><span class="lb">B₂ (빈틈/한계):</span><br>'+a.n.b2+'</div></div>';
-
-        h+='<div class="ac2"><div style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);"><div class="cl">예상 비용</div><div class="cv" style="color:#22c55e">'+a.cost+'억</div></div>';
-        h+='<div style="background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2);"><div class="cl">예상 효과</div><div class="ct" style="color:#a855f7">'+a.imp+'</div></div></div>';
-
-        h+='<div class="ad2"><div class="dti">📋 상세 분석</div>'+a.det+'</div>';
-        h+='<button class="art" onclick="analyze('+idx+')">🔄 재분석</button>';
-        ct.innerHTML=h;
-    },800);
+// ===== 결과 렌더링 =====
+function renderResult(r,s,mode){
+    var c=COL[s.t];
+    var uc={'긴급':'#ef4444','높음':'#f59e0b','보통':'#22c55e','낮음':'#64748b'};
+    var mTag=mode==='live'?'<span class="mt mt-l">🟢 Claude AI 실시간 분석 완료</span>':'<span class="mt mt-o">🟡 전문가 규칙 기반 분석 (프록시 서버+API 키 설정 시 AI 실시간 전환)</span>';
+    var h='<div style="text-align:center;margin-bottom:8px;">'+mTag+'</div>';
+    h+='<div class="av"><div class="ll">AI 판정 결과</div><div class="re" style="color:'+c+'">'+r.recommendation+' 포장</div>';
+    h+='<div class="vs"><div><div class="sl">위험점수</div><div class="sv2" style="color:#f0b429">'+r.risk_score+'</div></div>';
+    h+='<div><div class="sl">긴급도</div><div class="sv2" style="color:'+(uc[r.urgency]||'#888')+'">'+r.urgency+'</div></div>';
+    h+='<div><div class="sl">ROI</div><div class="sv2" style="color:#22c55e">'+r.roi+'배</div></div></div></div>';
+    h+='<div class="af"><div class="ti">⚠️ 핵심 위험 요인</div>';
+    if(r.key_factors)r.key_factors.forEach(function(f){h+='<div class="fi">'+f+'</div>';});
+    h+='</div>';
+    h+='<div class="an2"><div class="ti">🔬 N2B 프레임워크 분석</div>';
+    if(r.n2b){
+        h+='<div class="li"><span class="ln">N:</span> '+r.n2b.n+'</div>';
+        h+='<div class="li"><span class="lb2">B₁ (현재 BP 강점):</span><br><span style="color:#888">'+r.n2b.b1+'</span></div>';
+        h+='<div class="li"><span class="lb2">B₂ (빈틈/한계):</span><br>'+r.n2b.b2+'</div>';
+    }
+    h+='</div>';
+    h+='<div class="ac2"><div style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);"><div class="cl">예상 비용</div><div class="cv" style="color:#22c55e">'+r.cost_억+'억</div></div>';
+    h+='<div style="background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2);"><div class="cl">예상 효과</div><div class="ct2" style="color:#a855f7">'+r.improvement+'</div></div></div>';
+    h+='<div class="ad2"><div class="dti">📋 상세 분석</div>'+r.detail+'</div>';
+    h+='<button class="art" onclick="analyze('+curIdx+')">🔄 재분석'+(AI_MODE==='live'?' (매번 새로운 AI 응답)':'')+'</button>';
+    document.getElementById('aiC').innerHTML=h;
 }
 
 function closeAI(){document.getElementById('aiP').classList.remove('show');}
