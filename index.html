@@ -287,32 +287,54 @@ function analyze(idx){
     document.getElementById('aiN').textContent=TI[s.t]+' '+s.n;
     p.classList.add('show'); map.closePopup();
 
-    var modeLabel = AI_MODE==='live' ? '<span class="mt mt-l">🟢 Claude AI 실시간</span>' : '<span class="mt mt-o">🟡 오프라인 분석</span>';
-    ct.innerHTML='<div class="al"><div class="sp">🤖</div><div class="mg">AI N2B 분석 중...</div><div class="su">경사도·강수·사고·소음 4개 레이어 교차 분석</div><div style="margin-top:6px;">'+modeLabel+'</div></div>';
+    // ★ 항상 고정 분석 먼저 표시 (동일 데이터 = 신뢰도 확보)
+    ct.innerHTML='<div class="al"><div class="sp">🤖</div><div class="mg">N2B 분석 중...</div><div class="su">경사도·강수·사고·소음 4개 레이어 교차 분석</div></div>';
+    setTimeout(function(){
+        var result = offlineAI(s);
+        renderResult(result, s);
+    }, 600);
+}
 
-    if(AI_MODE==='live'){
-        // ★ FastAPI 프록시 경유 → Claude AI 실시간 호출
-        var prompt='당신은 40년 경력의 도로포장 전문가입니다. 아래 도로 조건을 N2B(Not-But-Because) 프레임워크로 분석하세요.\n\n도로 조건:\n- 위치: '+s.n+' (서울시)\n- 경사도: '+s.sl+'%\n- 연간 폭우(30mm/hr+): '+s.rn+'회\n- 우천시 사고: '+s.ac+'건/년\n- 일 교통량: '+s.tr.toLocaleString()+'대\n- 불투수면율: '+s.im+'%\n- 10년 침수: '+s.fl+'회\n- 소음민원: '+s.cm+'건/년\n\nJSON만 응답 (다른 텍스트 없이):\n{"recommendation":"배수성 또는 저소음 또는 투수성","risk_score":숫자,"urgency":"긴급|높음|보통|낮음","key_factors":["요인3개"],"n2b":{"n":"명제","b1":"BP강점","b2":"BP빈틈"},"improvement":"효과1문장","cost_억":숫자,"roi":숫자,"detail":"상세3~4문장"}';
-
-        fetch(API_BASE+'/api/analyze',{
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
-        })
-        .then(function(r){return r.json();})
-        .then(function(d){
-            if(d.error){throw new Error(d.error);}
-            var text='';if(d.content){d.content.forEach(function(b){if(b.text)text+=b.text;});}
-            var result=JSON.parse(text.replace(/```json|```/g,'').trim());
-            renderResult(result,s,'live');
-        })
-        .catch(function(err){
-            ct.innerHTML='<div class="ae">⚠️ AI 분석 오류: '+err.message+'<br><br>app.py에서 ANTHROPIC_API_KEY를 확인하세요.</div><button class="art" style="margin-top:8px;" onclick="AI_MODE=\'offline\';analyze('+idx+')">오프라인 분석으로 전환</button>';
-        });
-    } else {
-        // 오프라인 — 내장 규칙 기반 분석
-        setTimeout(function(){renderResult(offlineAI(s),s,'offline');},1000);
+// ===== AI 심화 분석 (Claude 호출) =====
+function deepAnalyze(idx){
+    if(AI_MODE!=='live'){
+        alert('AI 심화 분석은 백엔드 연결 시 사용 가능합니다.\nRender 서버가 슬립 중일 수 있습니다.');
+        return;
     }
+    var s=D[idx];
+    var box=document.getElementById('deepBox');
+    box.innerHTML='<div class="al"><div class="sp">🤖</div><div class="mg">Claude AI 심화 분석 중...</div><div class="su">대안 비교·시공 전략·유지보수 계획 생성</div></div>';
+
+    var base=offlineAI(s);
+    var prompt='당신은 40년 경력의 도로포장 전문가입니다.\n\n아래 구간에 대해 기본 N2B 분석은 이미 완료되었습니다:\n- 위치: '+s.n+' (서울시)\n- 추천: '+base.recommendation+' 포장\n- 위험점수: '+base.risk_score+'/100\n- 경사도: '+s.sl+'%, 폭우: '+s.rn+'회/년, 사고: '+s.ac+'건/년\n- 교통량: '+s.tr.toLocaleString()+'대/일, 불투수면: '+s.im+'%, 침수: '+s.fl+'회/10년\n\n기본 분석을 바탕으로 **심화 분석**을 해주세요. JSON만 응답:\n{"alternatives":[{"name":"대안명","pros":"장점","cons":"단점"}],"phasing":"시공 단계 전략 2~3문장","maintenance":"유지보수 계획 2~3문장","similar_cases":"국내외 유사 성공사례 2~3문장","budget_note":"예산 확보 전략 1~2문장"}';
+
+    fetch(API_BASE+'/api/analyze',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+    })
+    .then(function(r){return r.json();})
+    .then(function(d){
+        if(d.error){throw new Error(d.error);}
+        var text='';if(d.content){d.content.forEach(function(b){if(b.text)text+=b.text;});}
+        var r=JSON.parse(text.replace(/```json|```/g,'').trim());
+        var h='<div style="font-size:9px;text-align:center;margin-bottom:6px;"><span class="mt mt-l">🟢 Claude AI 심화 분석 완료</span></div>';
+        if(r.alternatives&&r.alternatives.length){
+            h+='<div style="font-size:10px;font-weight:700;color:#a855f7;margin-bottom:4px;">🔄 대안 비교</div>';
+            r.alternatives.forEach(function(a){
+                h+='<div style="padding:4px 8px;margin-bottom:3px;background:rgba(168,85,247,.06);border-left:2px solid #a855f7;border-radius:0 4px 4px 0;font-size:9px;line-height:1.5;">';
+                h+='<b>'+a.name+'</b><br><span style="color:#22c55e;">✓ '+a.pros+'</span><br><span style="color:#ef4444;">✗ '+a.cons+'</span></div>';
+            });
+        }
+        if(r.phasing){h+='<div style="margin-top:6px;font-size:10px;font-weight:700;color:#06b6d4;margin-bottom:3px;">📅 시공 단계 전략</div><div style="font-size:9px;color:#aaa;line-height:1.5;margin-bottom:6px;">'+r.phasing+'</div>';}
+        if(r.maintenance){h+='<div style="font-size:10px;font-weight:700;color:#f59e0b;margin-bottom:3px;">🔧 유지보수 계획</div><div style="font-size:9px;color:#aaa;line-height:1.5;margin-bottom:6px;">'+r.maintenance+'</div>';}
+        if(r.similar_cases){h+='<div style="font-size:10px;font-weight:700;color:#22c55e;margin-bottom:3px;">🌍 유사 성공사례</div><div style="font-size:9px;color:#aaa;line-height:1.5;margin-bottom:6px;">'+r.similar_cases+'</div>';}
+        if(r.budget_note){h+='<div style="font-size:10px;font-weight:700;color:#fb923c;margin-bottom:3px;">💰 예산 확보 전략</div><div style="font-size:9px;color:#aaa;line-height:1.5;">'+r.budget_note+'</div>';}
+        box.innerHTML=h;
+    })
+    .catch(function(err){
+        box.innerHTML='<div class="ae">⚠️ 심화 분석 오류: '+err.message+'</div>';
+    });
 }
 
 // ===== 오프라인 분석 엔진 =====
@@ -335,13 +357,12 @@ function offlineAI(s){
     return {recommendation:TN[s.t],risk_score:s.sc,urgency:urg,key_factors:factors[s.t],n2b:n2bs[s.t],improvement:imp,cost_억:cost,roi:roi,detail:det};
 }
 
-// ===== 결과 렌더링 =====
-function renderResult(r,s,mode){
+// ===== 결과 렌더링 (항상 동일한 고정 분석) =====
+function renderResult(r,s){
     var c=COL[s.t];
     var uc={'긴급':'#ef4444','높음':'#f59e0b','보통':'#22c55e','낮음':'#64748b'};
-    var mTag=mode==='live'?'<span class="mt mt-l">🟢 Claude AI 실시간 분석 완료</span>':'<span class="mt mt-o">🟡 전문가 규칙 기반 분석 (프록시 서버+API 키 설정 시 AI 실시간 전환)</span>';
-    var h='<div style="text-align:center;margin-bottom:8px;">'+mTag+'</div>';
-    h+='<div class="av"><div class="ll">AI 판정 결과</div><div class="re" style="color:'+c+'">'+r.recommendation+' 포장</div>';
+    var h='<div style="text-align:center;margin-bottom:8px;"><span class="mt mt-o">📊 N2B 구조화 분석 (고정 데이터 기반)</span></div>';
+    h+='<div class="av"><div class="ll">판정 결과</div><div class="re" style="color:'+c+'">'+r.recommendation+' 포장</div>';
     h+='<div class="vs"><div><div class="sl">위험점수</div><div class="sv2" style="color:#f0b429">'+r.risk_score+'</div></div>';
     h+='<div><div class="sl">긴급도</div><div class="sv2" style="color:'+(uc[r.urgency]||'#888')+'">'+r.urgency+'</div></div>';
     h+='<div><div class="sl">ROI</div><div class="sv2" style="color:#22c55e">'+r.roi+'배</div></div></div></div>';
@@ -358,7 +379,16 @@ function renderResult(r,s,mode){
     h+='<div class="ac2"><div style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);"><div class="cl">예상 비용</div><div class="cv" style="color:#22c55e">'+r.cost_억+'억</div></div>';
     h+='<div style="background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2);"><div class="cl">예상 효과</div><div class="ct2" style="color:#a855f7">'+r.improvement+'</div></div></div>';
     h+='<div class="ad2"><div class="dti">📋 상세 분석</div>'+r.detail+'</div>';
-    h+='<button class="art" onclick="analyze('+curIdx+')">🔄 재분석'+(AI_MODE==='live'?' (매번 새로운 AI 응답)':'')+'</button>';
+
+    // ★ AI 심화 분석 버튼 (Claude 호출)
+    if(AI_MODE==='live'){
+        h+='<button class="art" style="background:rgba(168,85,247,.15);border-color:rgba(168,85,247,.4);color:#a855f7;" onclick="deepAnalyze('+curIdx+')">🤖 AI 심화 분석 (대안 비교·시공 전략·유사 사례)</button>';
+        h+='<div style="font-size:8px;color:#666;text-align:center;margin-top:3px;">Claude AI가 추가 인사이트를 생성합니다</div>';
+    } else {
+        h+='<button class="art" style="opacity:.5;cursor:default;">🤖 AI 심화 분석 (백엔드 연결 시 활성화)</button>';
+    }
+    h+='<div id="deepBox" style="margin-top:8px;"></div>';
+
     document.getElementById('aiC').innerHTML=h;
 }
 
