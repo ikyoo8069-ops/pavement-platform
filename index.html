@@ -17,6 +17,7 @@ body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#0a0a0f;col
 .b-g{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.4);color:#22c55e;}
 .b-y{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.4);color:#f59e0b;}
 .b-r{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);color:#ef4444;}
+.b-b{background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.4);color:#3b82f6;}
 .main{display:flex;flex:1;overflow:hidden;}
 .pn{width:270px;flex-shrink:0;background:rgba(12,12,18,.98);border-right:1px solid rgba(255,255,255,.06);overflow-y:auto;padding:10px;z-index:1500;font-size:10px;}
 .pn::-webkit-scrollbar{width:3px;}.pn::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
@@ -59,6 +60,12 @@ body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#0a0a0f;col
 .ps{font-size:8px;color:#666;text-align:center;margin-top:3px;}
 .cm{border-radius:50%;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;transition:transform .2s;}
 .cm:hover{transform:scale(1.2);}
+
+/* 지도 스타일 전환 버튼 */
+.map-style-ctrl{position:absolute;top:10px;left:10px;z-index:1500;display:flex;gap:3px;background:rgba(12,12,18,.92);border:1px solid rgba(240,180,41,.3);border-radius:8px;padding:4px;}
+.map-style-btn{padding:4px 8px;border:1px solid transparent;border-radius:5px;background:transparent;color:#888;font-size:9px;font-weight:700;cursor:pointer;transition:all .15s;font-family:-apple-system,'Malgun Gothic',sans-serif;}
+.map-style-btn:hover{color:#e0e0e0;background:rgba(255,255,255,.06);}
+.map-style-btn.active{background:rgba(240,180,41,.2);border-color:rgba(240,180,41,.4);color:#f0b429;}
 
 /* AI 패널 */
 .ap{position:absolute;top:10px;right:10px;width:350px;max-height:calc(100% - 20px);overflow-y:auto;background:rgba(12,12,18,.97);border:1px solid rgba(240,180,41,.4);border-radius:12px;padding:14px;box-shadow:0 8px 32px rgba(0,0,0,.7);z-index:1500;display:none;}
@@ -108,10 +115,11 @@ body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#0a0a0f;col
 
 <div class="top">
     <span style="font-size:18px;">🛣️</span>
-    <div><h1>기능성 포장 필요구간 자동 탐색 플랫폼</h1><div class="sub">실제 도로 지도 + Claude AI 실시간 N2B 분석 + 공공 API 연동</div></div>
+    <div><h1>기능성 포장 필요구간 자동 탐색 플랫폼</h1><div class="sub">VWorld 공공지도 + Claude AI 실시간 N2B 분석 + 공공 API 연동</div></div>
     <div class="badges">
         <div class="badge b-y" id="aiBadge">AI 확인중...</div>
-        <div class="badge b-r">PROTOTYPE v1.0</div>
+        <div class="badge b-b" id="mapBadge">지도 로딩...</div>
+        <div class="badge b-r">PROTOTYPE v1.1</div>
     </div>
 </div>
 
@@ -137,7 +145,7 @@ body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#0a0a0f;col
     <div class="sec">
         <div class="stt">📡 API 연동 상태</div>
         <div class="ar"><div class="ard" id="d-ai" style="background:#f59e0b;"></div><div class="arn">Claude AI 분석</div><div class="ars" id="s-ai" style="color:#f59e0b;">확인중</div></div>
-        <div class="ar"><div class="ard" style="background:#22c55e;"></div><div class="arn">OSM 도로 지도</div><div class="ars" style="color:#22c55e;">연결됨</div></div>
+        <div class="ar"><div class="ard" id="d-vw" style="background:#f59e0b;"></div><div class="arn">VWorld 공공지도</div><div class="ars" id="s-vw" style="color:#f59e0b;">확인중</div></div>
         <div class="ar"><div class="ard" id="d-wx" style="background:#666;"></div><div class="arn">기상청 ASOS</div><div class="ars" id="s-wx" style="color:#666;">확인중</div></div>
         <div class="ar"><div class="ard" id="d-ta" style="background:#666;"></div><div class="arn">TAAS 사고이력</div><div class="ars" id="s-ta" style="color:#666;">확인중</div></div>
         <div class="ar"><div class="ard" id="d-dm" style="background:#666;"></div><div class="arn">국토정보 DEM</div><div class="ars" id="s-dm" style="color:#666;">확인중</div></div>
@@ -160,6 +168,16 @@ body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#0a0a0f;col
 
 <div class="mw">
     <div id="map"></div>
+
+    <!-- 지도 스타일 전환 -->
+    <div class="map-style-ctrl" id="mapStyleCtrl" style="display:none;">
+        <button class="map-style-btn active" onclick="switchMap('base')">🗺️ 기본</button>
+        <button class="map-style-btn" onclick="switchMap('satellite')">🛰️ 위성</button>
+        <button class="map-style-btn" onclick="switchMap('hybrid')">🏙️ 하이브리드</button>
+        <button class="map-style-btn" onclick="switchMap('midnight')">🌙 다크</button>
+        <button class="map-style-btn" onclick="switchMap('white')">☀️ 밝은</button>
+    </div>
+
     <div class="ap" id="aiP">
         <div class="ah"><h3>🤖 AI 종합 분석</h3><span class="ax" onclick="closeAI()">✕</span></div>
         <div id="aiN" style="font-size:11px;font-weight:700;color:#ccc;margin-bottom:8px;"></div>
@@ -173,10 +191,9 @@ var COL={drain:'#ef4444',quiet:'#a855f7',perm:'#06b6d4'};
 var TN={drain:'배수성',quiet:'저소음',perm:'투수성'};
 var TI={drain:'🛣️',quiet:'🔇',perm:'💧'};
 var vis={drain:1,quiet:1,perm:1};
-var AI_MODE='checking'; // 'live' or 'offline'
+var AI_MODE='checking';
 
-// ★ API 서버 주소 — Render 배포 URL로 설정
-// 같은 서버(Render)에서 열면 '' (빈문자), GitHub Pages에서 열면 Render 주소
+// ★ API 서버 주소
 var API_BASE = location.hostname.includes('github.io') 
     ? 'https://pavement-platform-1.onrender.com' 
     : '';
@@ -209,6 +226,68 @@ var D=[
 ];
 D.sort(function(a,b){return b.sc-a.sc;});
 
+// ===== VWorld 지도 타일 URLs (백엔드에서 가져옴) =====
+var vwTiles = {};   // {base, satellite, hybrid, midnight, white}
+var currentTile = null;
+var fallbackTile = null;
+
+// ===== 지도 초기화 =====
+var map = L.map('map',{zoomControl:false}).setView([37.5665,126.978],12);
+L.control.zoom({position:'topright'}).addTo(map);
+
+// 폴백: CARTO 타일 (VWorld 로딩 전 또는 실패 시)
+fallbackTile = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{
+    attribution:'&copy; OSM &copy; CARTO',subdomains:'abcd',maxZoom:19
+}).addTo(map);
+
+// VWorld 타일 로딩
+function loadVWorldTiles(){
+    fetch(API_BASE+'/api/vworld/tile-info')
+    .then(function(r){return r.json();})
+    .then(function(d){
+        if(d.status==='live'){
+            vwTiles = d;
+            // 폴백 제거 → VWorld 기본 지도로 전환
+            if(fallbackTile){map.removeLayer(fallbackTile);fallbackTile=null;}
+            currentTile = L.tileLayer(d.base,{
+                attribution:'&copy; VWorld 국토정보플랫폼',
+                maxZoom:19,
+                minZoom:5
+            }).addTo(map);
+            // 스타일 전환 버튼 표시
+            document.getElementById('mapStyleCtrl').style.display='flex';
+            // 상태 표시
+            setDot('vw','live');
+            var mb=document.getElementById('mapBadge');
+            mb.className='badge b-g';mb.textContent='VWorld 지도';
+        } else {
+            setDot('vw','off');
+            var mb=document.getElementById('mapBadge');
+            mb.className='badge b-y';mb.textContent='OSM 폴백';
+        }
+    })
+    .catch(function(){
+        setDot('vw','off');
+        var mb=document.getElementById('mapBadge');
+        mb.className='badge b-y';mb.textContent='OSM 폴백';
+    });
+}
+
+// 지도 스타일 전환
+function switchMap(style){
+    if(!vwTiles[style])return;
+    if(currentTile)map.removeLayer(currentTile);
+    if(fallbackTile){map.removeLayer(fallbackTile);fallbackTile=null;}
+    currentTile = L.tileLayer(vwTiles[style],{
+        attribution:'&copy; VWorld 국토정보플랫폼',
+        maxZoom:19,
+        minZoom:5
+    }).addTo(map);
+    // 버튼 활성화 상태 업데이트
+    document.querySelectorAll('.map-style-btn').forEach(function(b){b.classList.remove('active');});
+    event.target.classList.add('active');
+}
+
 // ===== 백엔드 상태 확인 =====
 function checkStatus(){
     fetch(API_BASE+'/api/status').then(function(r){return r.json();}).then(function(d){
@@ -221,30 +300,30 @@ function checkStatus(){
         var b=document.getElementById('aiBadge');
         if(AI_MODE==='live'){b.className='badge b-g';b.textContent='AI 실시간';}
         else{b.className='badge b-y';b.textContent='AI 오프라인';}
+        // VWorld 타일 로딩
+        loadVWorldTiles();
+        // CCTV & Safety
         loadCCTV();
         loadSafety();
     }).catch(function(){
         AI_MODE='offline';
-        setDot('ai','off');setDot('wx','off');setDot('ta','off');setDot('dm','off');setDot('cc','off');
+        setDot('ai','off');setDot('vw','off');setDot('wx','off');setDot('ta','off');setDot('dm','off');setDot('cc','off');
         var b=document.getElementById('aiBadge');b.className='badge b-y';b.textContent='AI 오프라인';
+        var mb=document.getElementById('mapBadge');mb.className='badge b-y';mb.textContent='OSM 폴백';
         loadCCTV();
         loadSafety();
     });
 }
 function setDot(id,st){
     var d=document.getElementById('d-'+id),s=document.getElementById('s-'+id);
+    if(!d||!s)return;
     if(st==='live'){d.style.background='#22c55e';s.style.color='#22c55e';s.textContent='실시간';}
     else if(st==='sample'){d.style.background='#f59e0b';s.style.color='#f59e0b';s.textContent='샘플';}
     else{d.style.background='#666';s.style.color='#666';s.textContent='미연결';}
 }
 setTimeout(checkStatus,500);
 
-// ===== 지도 =====
-var map=L.map('map',{zoomControl:false}).setView([37.5665,126.978],12);
-L.control.zoom({position:'topright'}).addTo(map);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{
-    attribution:'&copy; OSM &copy; CARTO',subdomains:'abcd',maxZoom:19}).addTo(map);
-
+// ===== 마커 레이어 =====
 var ML={drain:L.layerGroup().addTo(map),quiet:L.layerGroup().addTo(map),perm:L.layerGroup().addTo(map)};
 var MK=[];
 
@@ -262,7 +341,7 @@ D.forEach(function(s,i){
     h+='<div class="pr"><span class="k">침수이력</span><span class="v">'+s.fl+'회/10년</span></div></div>';
     h+='<div class="pd">'+s.ds+'</div>';
     h+='<button class="pb" onclick="analyze('+i+')">🤖 AI N2B 종합 분석</button>';
-    h+='<div class="ps" id="modeHint">'+( AI_MODE==='live'?'Claude AI 실시간 분석':'N2B 전문가 분석')+'</div>';
+    h+='<div class="ps" id="modeHint">'+(AI_MODE==='live'?'Claude AI 실시간 분석':'N2B 전문가 분석')+'</div>';
     var mk=L.marker([s.la,s.lo],{icon:ic}).bindPopup(h,{maxWidth:260,minWidth:220});
     var cr=L.circle([s.la,s.lo],{radius:s.sc>=90?400:s.sc>=80?300:200,color:c,fillColor:c,fillOpacity:.06,weight:1,opacity:.2});
     ML[s.t].addLayer(mk);ML[s.t].addLayer(cr);
@@ -286,8 +365,6 @@ function analyze(idx){
     var p=document.getElementById('aiP'),ct=document.getElementById('aiC');
     document.getElementById('aiN').textContent=TI[s.t]+' '+s.n;
     p.classList.add('show'); map.closePopup();
-
-    // ★ 항상 고정 분석 먼저 표시 (동일 데이터 = 신뢰도 확보)
     ct.innerHTML='<div class="al"><div class="sp">🤖</div><div class="mg">N2B 분석 중...</div><div class="su">경사도·강수·사고·소음 4개 레이어 교차 분석</div></div>';
     setTimeout(function(){
         var result = offlineAI(s);
@@ -357,7 +434,7 @@ function offlineAI(s){
     return {recommendation:TN[s.t],risk_score:s.sc,urgency:urg,key_factors:factors[s.t],n2b:n2bs[s.t],improvement:imp,cost_억:cost,roi:roi,detail:det};
 }
 
-// ===== 결과 렌더링 (항상 동일한 고정 분석) =====
+// ===== 결과 렌더링 =====
 function renderResult(r,s){
     var c=COL[s.t];
     var uc={'긴급':'#ef4444','높음':'#f59e0b','보통':'#22c55e','낮음':'#64748b'};
@@ -380,7 +457,6 @@ function renderResult(r,s){
     h+='<div style="background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2);"><div class="cl">예상 효과</div><div class="ct2" style="color:#a855f7">'+r.improvement+'</div></div></div>';
     h+='<div class="ad2"><div class="dti">📋 상세 분석</div>'+r.detail+'</div>';
 
-    // ★ AI 심화 분석 버튼 (Claude 호출)
     if(AI_MODE==='live'){
         h+='<button class="art" style="background:rgba(168,85,247,.15);border-color:rgba(168,85,247,.4);color:#a855f7;" onclick="deepAnalyze('+curIdx+')">🤖 AI 심화 분석 (대안 비교·시공 전략·유사 사례)</button>';
         h+='<div style="font-size:8px;color:#666;text-align:center;margin-top:3px;">Claude AI가 추가 인사이트를 생성합니다</div>';
@@ -416,7 +492,7 @@ function loadCCTV(){
                 popup+='<div style="display:none;padding:10px;background:rgba(250,204,21,.08);border-radius:6px;font-size:9px;color:#facc15;">영상 로딩 실패 — 직접 접속 필요</div></div>';
                 popup+='<a href="'+c.url+'" target="_blank" style="display:block;text-align:center;padding:6px;background:rgba(250,204,21,.12);border:1px solid rgba(250,204,21,.3);border-radius:6px;color:#facc15;font-size:9px;font-weight:700;text-decoration:none;">🔗 실시간 영상 열기</a>';
             } else {
-                popup+='<div style="padding:8px;background:rgba(250,204,21,.08);border:1px solid rgba(250,204,21,.2);border-radius:6px;font-size:9px;color:#aaa;text-align:center;">'+d.status==='sample'?'샘플 데이터 — ITS API 키 등록 시 실시간 영상 연결':'영상 URL 없음'+'</div>';
+                popup+='<div style="padding:8px;background:rgba(250,204,21,.08);border:1px solid rgba(250,204,21,.2);border-radius:6px;font-size:9px;color:#aaa;text-align:center;">'+(d.status==='sample'?'샘플 데이터 — ITS API 키 등록 시 실시간 영상 연결':'영상 URL 없음')+'</div>';
             }
             popup+='</div>';
             var mk=L.marker([c.lat,c.lng],{icon:ic}).bindPopup(popup,{maxWidth:240,minWidth:180});
