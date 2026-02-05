@@ -29,6 +29,7 @@ WEATHER_API_KEY = os.getenv("WEATHER_API_KEY", "")      # 기상청 ASOS
 TAAS_API_KEY = os.getenv("TAAS_API_KEY", "")            # 교통사고분석
 DEM_API_KEY = os.getenv("DEM_API_KEY", "")              # 국토정보 DEM
 ITS_CCTV_KEY = os.getenv("ITS_CCTV_KEY", "")            # ITS CCTV (its.go.kr)
+VWORLD_API_KEY = os.getenv("VWORLD_API_KEY", "")         # VWorld 지도/DEM
 
 app = FastAPI(title="기능성 포장 플랫폼 API", version="1.0")
 
@@ -42,6 +43,68 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# ============================================
+#  0) VWorld 지도 API (배경지도 + DEM)
+# ============================================
+@app.get("/api/vworld/tile-info")
+async def get_vworld_tile_info():
+    """VWorld 배경지도 타일 URL 반환 (API 키 숨김)"""
+    if VWORLD_API_KEY:
+        return {
+            "status": "live",
+            "base": f"https://api.vworld.kr/req/wmts/1.0.0/{VWORLD_API_KEY}/Base/{{z}}/{{y}}/{{x}}.png",
+            "satellite": f"https://api.vworld.kr/req/wmts/1.0.0/{VWORLD_API_KEY}/Satellite/{{z}}/{{y}}/{{x}}.jpeg",
+            "hybrid": f"https://api.vworld.kr/req/wmts/1.0.0/{VWORLD_API_KEY}/Hybrid/{{z}}/{{y}}/{{x}}.png",
+            "midnight": f"https://api.vworld.kr/req/wmts/1.0.0/{VWORLD_API_KEY}/midnight/{{z}}/{{y}}/{{x}}.png",
+            "white": f"https://api.vworld.kr/req/wmts/1.0.0/{VWORLD_API_KEY}/white/{{z}}/{{y}}/{{x}}.png",
+        }
+    else:
+        return {
+            "status": "unavailable",
+            "message": "VWorld API 키 미설정. Render 환경변수에 VWORLD_API_KEY를 추가하세요."
+        }
+
+
+@app.get("/api/vworld/geocode")
+async def geocode(address: str):
+    """주소 → 좌표 변환"""
+    if not VWORLD_API_KEY:
+        return {"status": "error", "message": "VWorld API 키 미설정"}
+    async with httpx.AsyncClient(timeout=15.0) as client:
+        resp = await client.get(
+            "https://api.vworld.kr/req/address",
+            params={
+                "service": "address",
+                "request": "getcoord",
+                "key": VWORLD_API_KEY,
+                "address": address,
+                "type": "road",
+                "format": "json",
+            }
+        )
+        return resp.json()
+
+
+@app.get("/api/vworld/reverse-geocode")
+async def reverse_geocode(lat: float, lng: float):
+    """좌표 → 주소 변환"""
+    if not VWORLD_API_KEY:
+        return {"status": "error", "message": "VWorld API 키 미설정"}
+    async with httpx.AsyncClient(timeout=15.0) as client:
+        resp = await client.get(
+            "https://api.vworld.kr/req/address",
+            params={
+                "service": "address",
+                "request": "getaddr",
+                "key": VWORLD_API_KEY,
+                "point": f"{lng},{lat}",
+                "type": "road",
+                "format": "json",
+            }
+        )
+        return resp.json()
 
 
 # ============================================
@@ -293,7 +356,7 @@ async def get_safety_facilities(lat: float = 37.55, lng: float = 126.98, radius:
 
 
 # ============================================
-#  5) 시스템 상태 확인
+#  7) 시스템 상태 확인
 # ============================================
 @app.get("/api/status")
 async def status():
@@ -304,6 +367,7 @@ async def status():
         "taas": "connected" if TAAS_API_KEY else "sample",
         "dem": "connected" if DEM_API_KEY else "sample",
         "cctv": "connected" if ITS_CCTV_KEY else "sample",
+        "vworld": "connected" if VWORLD_API_KEY else "unavailable",
         "safety": "sample",
     }
 
@@ -332,6 +396,7 @@ if __name__ == "__main__":
     print("=" * 55)
     print()
     print(f"  📡 Claude AI   : {'✅ 연결됨' if key_ok else '❌ API 키 필요'}")
+    print(f"  🗺️  VWorld 지도 : {'✅ 연결됨' if VWORLD_API_KEY else '❌ API 키 필요'}")
     print(f"  🌧️  기상청 ASOS : {'✅ 연결됨' if WEATHER_API_KEY else '⬜ 샘플 데이터'}")
     print(f"  🚗 TAAS 사고   : {'✅ 연결됨' if TAAS_API_KEY else '⬜ 샘플 데이터'}")
     print(f"  ⛰️  국토정보 DEM: {'✅ 연결됨' if DEM_API_KEY else '⬜ 샘플 데이터'}")
