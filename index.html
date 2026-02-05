@@ -21,31 +21,26 @@ body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#0a0a0f;col
 .main{display:flex;flex:1;overflow:hidden;}
 .pn{width:270px;flex-shrink:0;background:rgba(12,12,18,.98);border-right:1px solid rgba(255,255,255,.06);overflow-y:auto;padding:10px;z-index:1500;font-size:10px;}
 .pn::-webkit-scrollbar{width:3px;}.pn::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
-.sec{margin-bottom:10px;}
-.stt{font-size:10px;font-weight:700;color:#f0b429;margin-bottom:5px;}
+.sec{margin-bottom:10px;}.stt{font-size:10px;font-weight:700;color:#f0b429;margin-bottom:5px;}
 .lt{display:flex;align-items:center;gap:5px;padding:5px 7px;margin-bottom:2px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:5px;cursor:pointer;transition:all .15s;}
-.lt:hover{background:rgba(255,255,255,.06);}
-.lt.on{border-color:var(--c);background:var(--bg);}
-.lt .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.lt .nm{font-weight:600;flex:1;font-size:10px;}
-.lt .ct{font-weight:900;color:var(--c);font-size:10px;}
+.lt:hover{background:rgba(255,255,255,.06);}.lt.on{border-color:var(--c);background:var(--bg);}
+.lt .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}.lt .nm{font-weight:600;flex:1;font-size:10px;}.lt .ct{font-weight:900;color:var(--c);font-size:10px;}
 .rc{padding:8px;margin-bottom:6px;background:rgba(240,180,41,.06);border:1px solid rgba(240,180,41,.2);border-radius:8px;text-align:center;}
 .rc .bi{font-size:28px;font-weight:900;color:#f0b429;}.rc .lb{font-size:9px;color:#666;}
 .tgr{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;margin-bottom:6px;}
 .tc{padding:4px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:4px;text-align:center;}
 .tc .tn{font-size:10px;font-weight:700;}.tc .tv{font-size:11px;font-weight:900;color:#22c55e;margin-top:2px;}
 .ar{display:flex;align-items:center;gap:5px;padding:3px 6px;font-size:9px;}
-.ard{width:6px;height:6px;border-radius:50%;flex-shrink:0;transition:background .3s;}
-.arn{flex:1;font-weight:600;}
-.ars{font-size:8px;transition:color .3s;}
+.ard{width:6px;height:6px;border-radius:50%;flex-shrink:0;}.arn{flex:1;font-weight:600;}.ars{font-size:8px;}
 .si{display:flex;align-items:center;gap:5px;padding:4px 6px;margin-bottom:2px;background:rgba(255,255,255,.03);border:1px solid transparent;border-radius:4px;cursor:pointer;transition:all .12s;}
-.si:hover{background:rgba(240,180,41,.1);}
-.si.ac{background:rgba(240,180,41,.15);border-color:rgba(240,180,41,.3);}
+.si:hover{background:rgba(240,180,41,.1);}.si.ac{background:rgba(240,180,41,.15);border-color:rgba(240,180,41,.3);}
 .si .rk{width:16px;height:16px;border-radius:50%;background:#f0b429;color:#000;font-size:8px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.si .sn{flex:1;font-weight:600;font-size:10px;}
-.si .ss{padding:1px 3px;border-radius:3px;font-size:8px;font-weight:700;}
-.si .sv{font-weight:900;color:#f0b429;font-size:9px;}
+.si .sn{flex:1;font-weight:600;font-size:10px;}.si .ss{padding:1px 3px;border-radius:3px;font-size:8px;font-weight:700;}.si .sv{font-weight:900;color:#f0b429;font-size:9px;}
 .nb{padding:8px;background:rgba(240,180,41,.04);border:1px solid rgba(240,180,41,.12);border-radius:6px;font-size:9px;line-height:1.5;}
+/* 실시간 교통 */
+.tf-item{display:flex;align-items:center;gap:5px;padding:3px 6px;margin-bottom:2px;background:rgba(255,255,255,.03);border-radius:4px;font-size:9px;}
+.tf-name{flex:1;font-weight:600;}.tf-speed{font-weight:900;min-width:32px;text-align:right;}
+.tf-bar{width:40px;height:4px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;}.tf-bar-in{height:100%;border-radius:2px;}
 .mw{flex:1;position:relative;z-index:1;}
 #map{width:100%;height:100%;z-index:1;}
 .leaflet-popup-content-wrapper{background:rgba(15,15,25,.96)!important;color:#e0e0e0!important;border:1px solid rgba(240,180,41,.35)!important;border-radius:10px!important;box-shadow:0 8px 32px rgba(0,0,0,.6)!important;}
@@ -55,74 +50,45 @@ body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#0a0a0f;col
 .pg{display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;font-size:10px;margin-bottom:8px;}
 .pr{display:flex;justify-content:space-between;}.pr .k{color:#666;}.pr .v{font-weight:700;}
 .pd{font-size:9px;color:#888;line-height:1.4;margin-bottom:10px;}
-.pb{width:100%;padding:10px;background:linear-gradient(135deg,#f0b429,#e09000);border:none;border-radius:8px;color:#000;font-weight:900;font-size:11px;cursor:pointer;}
-.pb:hover{filter:brightness(1.1);}
+.pb{width:100%;padding:10px;background:linear-gradient(135deg,#f0b429,#e09000);border:none;border-radius:8px;color:#000;font-weight:900;font-size:11px;cursor:pointer;}.pb:hover{filter:brightness(1.1);}
 .ps{font-size:8px;color:#666;text-align:center;margin-top:3px;}
-.cm{border-radius:50%;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;transition:transform .2s;}
-.cm:hover{transform:scale(1.2);}
-
-/* 지도 스타일 전환 버튼 */
+.cm{border-radius:50%;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;transition:transform .2s;}.cm:hover{transform:scale(1.2);}
 .map-style-ctrl{position:absolute;top:10px;left:10px;z-index:1500;display:flex;gap:3px;background:rgba(12,12,18,.92);border:1px solid rgba(240,180,41,.3);border-radius:8px;padding:4px;}
-.map-style-btn{padding:4px 8px;border:1px solid transparent;border-radius:5px;background:transparent;color:#888;font-size:9px;font-weight:700;cursor:pointer;transition:all .15s;font-family:-apple-system,'Malgun Gothic',sans-serif;}
-.map-style-btn:hover{color:#e0e0e0;background:rgba(255,255,255,.06);}
+.map-style-btn{padding:4px 8px;border:1px solid transparent;border-radius:5px;background:transparent;color:#888;font-size:9px;font-weight:700;cursor:pointer;transition:all .15s;font-family:inherit;}.map-style-btn:hover{color:#e0e0e0;background:rgba(255,255,255,.06);}
 .map-style-btn.active{background:rgba(240,180,41,.2);border-color:rgba(240,180,41,.4);color:#f0b429;}
-
+/* 기상 미니 패널 */
+.wx-mini{position:absolute;bottom:10px;left:10px;z-index:1500;background:rgba(12,12,18,.92);border:1px solid rgba(59,130,246,.3);border-radius:10px;padding:10px;min-width:180px;display:none;}
+.wx-mini.show{display:block;}
+.wx-mini .wx-title{font-size:10px;font-weight:700;color:#3b82f6;margin-bottom:6px;}.wx-mini .wx-row{display:flex;justify-content:space-between;font-size:9px;padding:2px 0;}
+.wx-mini .wx-val{font-weight:700;color:#e0e0e0;}
 /* AI 패널 */
 .ap{position:absolute;top:10px;right:10px;width:350px;max-height:calc(100% - 20px);overflow-y:auto;background:rgba(12,12,18,.97);border:1px solid rgba(240,180,41,.4);border-radius:12px;padding:14px;box-shadow:0 8px 32px rgba(0,0,0,.7);z-index:1500;display:none;}
-.ap.show{display:block;}
-.ap::-webkit-scrollbar{width:3px;}.ap::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
-.ah{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-.ah h3{font-size:13px;font-weight:900;color:#f0b429;}
-.ax{cursor:pointer;color:#666;font-size:16px;padding:2px 6px;}.ax:hover{color:#fff;}
+.ap.show{display:block;}.ap::-webkit-scrollbar{width:3px;}.ap::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
+.ah{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}.ah h3{font-size:13px;font-weight:900;color:#f0b429;}.ax{cursor:pointer;color:#666;font-size:16px;padding:2px 6px;}.ax:hover{color:#fff;}
 @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
-.al{text-align:center;padding:30px;}
-.al .sp{font-size:28px;display:inline-block;animation:spin 1s linear infinite;}
-.al .mg{font-size:11px;color:#f0b429;font-weight:700;margin-top:8px;}
-.al .su{font-size:9px;color:#666;margin-top:3px;}
-.mt{padding:2px 8px;border-radius:10px;font-size:8px;display:inline-block;}
-.mt-l{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:#22c55e;}
-.mt-o{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:#f59e0b;}
-
-.av{padding:12px;background:rgba(240,180,41,.1);border:1px solid rgba(240,180,41,.3);border-radius:8px;margin-bottom:10px;text-align:center;}
-.av .ll{font-size:9px;color:#888;margin-bottom:2px;}
-.av .re{font-size:22px;font-weight:900;}
-.av .vs{display:flex;justify-content:center;gap:14px;margin-top:8px;}
-.av .vs>div{text-align:center;}
-.av .sl{font-size:8px;color:#888;}
-.av .sv2{font-size:15px;font-weight:900;}
-.af{margin-bottom:10px;}
-.af .ti{font-size:10px;font-weight:700;color:#f0b429;margin-bottom:4px;}
-.af .fi{font-size:9px;padding:4px 8px;margin-bottom:2px;background:rgba(239,68,68,.08);border-left:2px solid #ef4444;border-radius:0 4px 4px 0;color:#ccc;line-height:1.4;}
-.an2{padding:10px;background:rgba(240,180,41,.05);border:1px solid rgba(240,180,41,.15);border-radius:8px;margin-bottom:10px;}
-.an2 .ti{font-size:10px;font-weight:700;color:#f0b429;margin-bottom:6px;}
-.an2 .li{font-size:10px;margin-bottom:5px;line-height:1.5;}
-.an2 .ln{color:#ef4444;font-weight:700;}
-.an2 .lb2{color:#f0b429;font-weight:700;}
-.ac2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;}
-.ac2>div{padding:8px;border-radius:6px;text-align:center;}
-.ac2 .cl{font-size:8px;color:#888;}.ac2 .cv{font-size:16px;font-weight:900;}.ac2 .ct2{font-size:9px;font-weight:600;margin-top:2px;line-height:1.3;}
-.ad2{padding:8px;background:rgba(255,255,255,.03);border-radius:6px;font-size:9px;color:#aaa;line-height:1.6;margin-bottom:10px;}
-.ad2 .dti{font-size:9px;font-weight:700;color:#888;margin-bottom:4px;}
-.art{width:100%;padding:8px;background:rgba(240,180,41,.12);border:1px solid rgba(240,180,41,.3);border-radius:6px;color:#f0b429;font-weight:700;font-size:10px;cursor:pointer;margin-top:4px;}
-.art:hover{background:rgba(240,180,41,.2);}
+.al{text-align:center;padding:30px;}.al .sp{font-size:28px;display:inline-block;animation:spin 1s linear infinite;}.al .mg{font-size:11px;color:#f0b429;font-weight:700;margin-top:8px;}.al .su{font-size:9px;color:#666;margin-top:3px;}
+.mt{padding:2px 8px;border-radius:10px;font-size:8px;display:inline-block;}.mt-l{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:#22c55e;}.mt-o{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:#f59e0b;}
+.av{padding:12px;background:rgba(240,180,41,.1);border:1px solid rgba(240,180,41,.3);border-radius:8px;margin-bottom:10px;text-align:center;}.av .ll{font-size:9px;color:#888;margin-bottom:2px;}.av .re{font-size:22px;font-weight:900;}.av .vs{display:flex;justify-content:center;gap:14px;margin-top:8px;}.av .vs>div{text-align:center;}.av .sl{font-size:8px;color:#888;}.av .sv2{font-size:15px;font-weight:900;}
+.af{margin-bottom:10px;}.af .ti{font-size:10px;font-weight:700;color:#f0b429;margin-bottom:4px;}.af .fi{font-size:9px;padding:4px 8px;margin-bottom:2px;background:rgba(239,68,68,.08);border-left:2px solid #ef4444;border-radius:0 4px 4px 0;color:#ccc;line-height:1.4;}
+.an2{padding:10px;background:rgba(240,180,41,.05);border:1px solid rgba(240,180,41,.15);border-radius:8px;margin-bottom:10px;}.an2 .ti{font-size:10px;font-weight:700;color:#f0b429;margin-bottom:6px;}.an2 .li{font-size:10px;margin-bottom:5px;line-height:1.5;}.an2 .ln{color:#ef4444;font-weight:700;}.an2 .lb2{color:#f0b429;font-weight:700;}
+.ac2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;}.ac2>div{padding:8px;border-radius:6px;text-align:center;}.ac2 .cl{font-size:8px;color:#888;}.ac2 .cv{font-size:16px;font-weight:900;}.ac2 .ct2{font-size:9px;font-weight:600;margin-top:2px;line-height:1.3;}
+.ad2{padding:8px;background:rgba(255,255,255,.03);border-radius:6px;font-size:9px;color:#aaa;line-height:1.6;margin-bottom:10px;}.ad2 .dti{font-size:9px;font-weight:700;color:#888;margin-bottom:4px;}
+.art{width:100%;padding:8px;background:rgba(240,180,41,.12);border:1px solid rgba(240,180,41,.3);border-radius:6px;color:#f0b429;font-weight:700;font-size:10px;cursor:pointer;margin-top:4px;}.art:hover{background:rgba(240,180,41,.2);}
 .ae{padding:12px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:8px;font-size:10px;color:#ef4444;line-height:1.5;}
-
 @media(max-width:768px){.pn{width:220px;}.ap{width:300px;}}
 @media(max-width:480px){.pn{display:none;}.ap{width:calc(100% - 20px);left:10px;right:10px;}}
 </style>
 </head>
 <body>
-
 <div class="top">
     <span style="font-size:18px;">🛣️</span>
-    <div><h1>기능성 포장 필요구간 자동 탐색 플랫폼</h1><div class="sub">VWorld 공공지도 + Claude AI 실시간 N2B 분석 + 공공 API 연동</div></div>
+    <div><h1>기능성 포장 필요구간 자동 탐색 플랫폼</h1><div class="sub">VWorld 공공지도 + Claude AI N2B + ASOS·TAAS·TOPIS 실시간 연동</div></div>
     <div class="badges">
         <div class="badge b-y" id="aiBadge">AI 확인중...</div>
         <div class="badge b-b" id="mapBadge">지도 로딩...</div>
-        <div class="badge b-r">PROTOTYPE v1.1</div>
+        <div class="badge b-r">v1.1</div>
     </div>
 </div>
-
 <div class="main">
 <div class="pn">
     <div class="sec">
@@ -143,12 +109,16 @@ body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#0a0a0f;col
         </div>
     </div>
     <div class="sec">
+        <div class="stt">🚦 실시간 교통 소통</div>
+        <div id="trafficPanel"><div style="color:#666;font-size:9px;padding:4px;">로딩 중...</div></div>
+    </div>
+    <div class="sec">
         <div class="stt">📡 API 연동 상태</div>
         <div class="ar"><div class="ard" id="d-ai" style="background:#f59e0b;"></div><div class="arn">Claude AI 분석</div><div class="ars" id="s-ai" style="color:#f59e0b;">확인중</div></div>
         <div class="ar"><div class="ard" id="d-vw" style="background:#f59e0b;"></div><div class="arn">VWorld 공공지도</div><div class="ars" id="s-vw" style="color:#f59e0b;">확인중</div></div>
         <div class="ar"><div class="ard" id="d-wx" style="background:#666;"></div><div class="arn">기상청 ASOS</div><div class="ars" id="s-wx" style="color:#666;">확인중</div></div>
         <div class="ar"><div class="ard" id="d-ta" style="background:#666;"></div><div class="arn">TAAS 사고이력</div><div class="ars" id="s-ta" style="color:#666;">확인중</div></div>
-        <div class="ar"><div class="ard" id="d-dm" style="background:#666;"></div><div class="arn">국토정보 DEM</div><div class="ars" id="s-dm" style="color:#666;">확인중</div></div>
+        <div class="ar"><div class="ard" id="d-tp" style="background:#666;"></div><div class="arn">TOPIS 교통</div><div class="ars" id="s-tp" style="color:#666;">확인중</div></div>
         <div class="ar"><div class="ard" id="d-cc" style="background:#666;"></div><div class="arn">ITS CCTV 영상</div><div class="ars" id="s-cc" style="color:#666;">확인중</div></div>
         <div class="ar"><div class="ard" id="d-sf" style="background:#fb923c;"></div><div class="arn">안전시설 점검</div><div class="ars" id="s-sf" style="color:#fb923c;">샘플</div></div>
     </div>
@@ -160,24 +130,24 @@ body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#0a0a0f;col
         <div class="nb">
             <div style="color:#ef4444;font-weight:700;">N: "서울시 전체 도로에 기능성 포장"</div>
             <div style="color:#f0b429;font-weight:700;">B: 전부는 아니지만</div>
-            <div style="color:#f0b429;font-weight:700;">B: 경사3%+∩폭우∩사고 → <b style="color:#f0b429;">23곳</b>엔 필요!</div>
+            <div style="color:#f0b429;font-weight:700;">B: 경사3%+∩폭우∩사고 → <b>23곳</b>엔 필요!</div>
             <div style="color:#555;margin-top:3px;">→ 전체 2.3%만 교체 → 사고 30%↓<br>23곳×2km×3천만 = <b style="color:#f0b429;">약 138억원</b></div>
         </div>
     </div>
 </div>
-
 <div class="mw">
     <div id="map"></div>
-
-    <!-- 지도 스타일 전환 -->
     <div class="map-style-ctrl" id="mapStyleCtrl" style="display:none;">
-        <button class="map-style-btn active" onclick="switchMap('base')">🗺️ 기본</button>
-        <button class="map-style-btn" onclick="switchMap('satellite')">🛰️ 위성</button>
-        <button class="map-style-btn" onclick="switchMap('hybrid')">🏙️ 하이브리드</button>
-        <button class="map-style-btn" onclick="switchMap('midnight')">🌙 다크</button>
-        <button class="map-style-btn" onclick="switchMap('white')">☀️ 밝은</button>
+        <button class="map-style-btn active" onclick="switchMap('base',this)">🗺️ 기본</button>
+        <button class="map-style-btn" onclick="switchMap('satellite',this)">🛰️ 위성</button>
+        <button class="map-style-btn" onclick="switchMap('hybrid',this)">🏙️ 하이브리드</button>
+        <button class="map-style-btn" onclick="switchMap('midnight',this)">🌙 다크</button>
+        <button class="map-style-btn" onclick="switchMap('white',this)">☀️ 밝은</button>
     </div>
-
+    <div class="wx-mini" id="wxPanel">
+        <div class="wx-title">🌧️ 서울 실시간 기상 (ASOS)</div>
+        <div id="wxData"><div style="font-size:9px;color:#666;">로딩 중...</div></div>
+    </div>
     <div class="ap" id="aiP">
         <div class="ah"><h3>🤖 AI 종합 분석</h3><span class="ax" onclick="closeAI()">✕</span></div>
         <div id="aiN" style="font-size:11px;font-weight:700;color:#ccc;margin-bottom:8px;"></div>
@@ -187,18 +157,10 @@ body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#0a0a0f;col
 </div>
 
 <script>
-var COL={drain:'#ef4444',quiet:'#a855f7',perm:'#06b6d4'};
-var TN={drain:'배수성',quiet:'저소음',perm:'투수성'};
-var TI={drain:'🛣️',quiet:'🔇',perm:'💧'};
-var vis={drain:1,quiet:1,perm:1};
-var AI_MODE='checking';
+var COL={drain:'#ef4444',quiet:'#a855f7',perm:'#06b6d4'},TN={drain:'배수성',quiet:'저소음',perm:'투수성'},TI={drain:'🛣️',quiet:'🔇',perm:'💧'};
+var vis={drain:1,quiet:1,perm:1},AI_MODE='checking';
+var API_BASE=location.hostname.includes('github.io')?'https://pavement-platform-1.onrender.com':'';
 
-// ★ API 서버 주소
-var API_BASE = location.hostname.includes('github.io') 
-    ? 'https://pavement-platform-1.onrender.com' 
-    : '';
-
-// ===== 23개 구간 데이터 =====
 var D=[
 {id:1,n:'남산 순환로',la:37.5512,lo:126.9882,t:'drain',sl:6.2,rn:42,ac:8,sc:95,tr:35000,im:60,fl:1,cm:3,ds:'급경사 6.2% + 연 42회 폭우 + 우천사고 8건/년'},
 {id:2,n:'강남역 일대',la:37.4979,lo:127.0276,t:'perm',sl:1.2,rn:38,ac:3,sc:94,tr:72000,im:92,fl:5,cm:8,ds:'불투수면 92% + 침수 5회/10년'},
@@ -226,107 +188,105 @@ var D=[
 ];
 D.sort(function(a,b){return b.sc-a.sc;});
 
-// ===== VWorld 지도 타일 URLs (백엔드에서 가져옴) =====
-var vwTiles = {};   // {base, satellite, hybrid, midnight, white}
-var currentTile = null;
-var fallbackTile = null;
-
-// ===== 지도 초기화 =====
-var map = L.map('map',{zoomControl:false}).setView([37.5665,126.978],12);
+// ===== 지도 =====
+var map=L.map('map',{zoomControl:false}).setView([37.5665,126.978],12);
 L.control.zoom({position:'topright'}).addTo(map);
+var fallbackTile=L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{attribution:'&copy; OSM',subdomains:'abcd',maxZoom:19}).addTo(map);
+var vwTiles={},currentTile=null;
 
-// 폴백: CARTO 타일 (VWorld 로딩 전 또는 실패 시)
-fallbackTile = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{
-    attribution:'&copy; OSM &copy; CARTO',subdomains:'abcd',maxZoom:19
-}).addTo(map);
-
-// VWorld 타일 로딩
 function loadVWorldTiles(){
-    fetch(API_BASE+'/api/vworld/tile-info')
-    .then(function(r){return r.json();})
-    .then(function(d){
+    fetch(API_BASE+'/api/vworld/tile-info').then(function(r){return r.json();}).then(function(d){
         if(d.status==='live'){
-            vwTiles = d;
-            // 폴백 제거 → VWorld 기본 지도로 전환
-            if(fallbackTile){map.removeLayer(fallbackTile);fallbackTile=null;}
-            currentTile = L.tileLayer(d.base,{
-                attribution:'&copy; VWorld 국토정보플랫폼',
-                maxZoom:19,
-                minZoom:5
-            }).addTo(map);
-            // 스타일 전환 버튼 표시
+            vwTiles=d;if(fallbackTile){map.removeLayer(fallbackTile);fallbackTile=null;}
+            currentTile=L.tileLayer(d.base,{attribution:'&copy; VWorld',maxZoom:19,minZoom:5}).addTo(map);
             document.getElementById('mapStyleCtrl').style.display='flex';
-            // 상태 표시
-            setDot('vw','live');
-            var mb=document.getElementById('mapBadge');
-            mb.className='badge b-g';mb.textContent='VWorld 지도';
-        } else {
-            setDot('vw','off');
-            var mb=document.getElementById('mapBadge');
-            mb.className='badge b-y';mb.textContent='OSM 폴백';
-        }
-    })
-    .catch(function(){
-        setDot('vw','off');
-        var mb=document.getElementById('mapBadge');
-        mb.className='badge b-y';mb.textContent='OSM 폴백';
-    });
+            setDot('vw','live');var mb=document.getElementById('mapBadge');mb.className='badge b-g';mb.textContent='VWorld 지도';
+        }else{setDot('vw','off');var mb=document.getElementById('mapBadge');mb.className='badge b-y';mb.textContent='OSM 폴백';}
+    }).catch(function(){setDot('vw','off');var mb=document.getElementById('mapBadge');mb.className='badge b-y';mb.textContent='OSM 폴백';});
+}
+function switchMap(style,btn){
+    if(!vwTiles[style])return;if(currentTile)map.removeLayer(currentTile);if(fallbackTile){map.removeLayer(fallbackTile);fallbackTile=null;}
+    currentTile=L.tileLayer(vwTiles[style],{attribution:'&copy; VWorld',maxZoom:19,minZoom:5}).addTo(map);
+    document.querySelectorAll('.map-style-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');
 }
 
-// 지도 스타일 전환
-function switchMap(style){
-    if(!vwTiles[style])return;
-    if(currentTile)map.removeLayer(currentTile);
-    if(fallbackTile){map.removeLayer(fallbackTile);fallbackTile=null;}
-    currentTile = L.tileLayer(vwTiles[style],{
-        attribution:'&copy; VWorld 국토정보플랫폼',
-        maxZoom:19,
-        minZoom:5
-    }).addTo(map);
-    // 버튼 활성화 상태 업데이트
-    document.querySelectorAll('.map-style-btn').forEach(function(b){b.classList.remove('active');});
-    event.target.classList.add('active');
-}
-
-// ===== 백엔드 상태 확인 =====
+// ===== 상태 확인 =====
 function checkStatus(){
     fetch(API_BASE+'/api/status').then(function(r){return r.json();}).then(function(d){
         setDot('ai',d.claude_ai==='connected'?'live':'off');
         setDot('wx',d.weather==='connected'?'live':(d.weather==='sample'?'sample':'off'));
         setDot('ta',d.taas==='connected'?'live':(d.taas==='sample'?'sample':'off'));
-        setDot('dm',d.dem==='connected'?'live':(d.dem==='sample'?'sample':'off'));
+        setDot('tp',d.topis==='connected'?'live':(d.topis==='sample'?'sample':'off'));
         setDot('cc',d.cctv==='connected'?'live':(d.cctv==='sample'?'sample':'off'));
-        AI_MODE = d.claude_ai==='connected' ? 'live' : 'offline';
+        AI_MODE=d.claude_ai==='connected'?'live':'offline';
         var b=document.getElementById('aiBadge');
-        if(AI_MODE==='live'){b.className='badge b-g';b.textContent='AI 실시간';}
-        else{b.className='badge b-y';b.textContent='AI 오프라인';}
-        // VWorld 타일 로딩
-        loadVWorldTiles();
-        // CCTV & Safety
-        loadCCTV();
-        loadSafety();
+        if(AI_MODE==='live'){b.className='badge b-g';b.textContent='AI 실시간';}else{b.className='badge b-y';b.textContent='AI 오프라인';}
+        loadVWorldTiles();loadCCTV();loadSafety();loadWeather();loadTraffic();
     }).catch(function(){
-        AI_MODE='offline';
-        setDot('ai','off');setDot('vw','off');setDot('wx','off');setDot('ta','off');setDot('dm','off');setDot('cc','off');
+        AI_MODE='offline';setDot('ai','off');setDot('vw','off');setDot('wx','off');setDot('ta','off');setDot('tp','off');setDot('cc','off');
         var b=document.getElementById('aiBadge');b.className='badge b-y';b.textContent='AI 오프라인';
         var mb=document.getElementById('mapBadge');mb.className='badge b-y';mb.textContent='OSM 폴백';
-        loadCCTV();
-        loadSafety();
+        loadCCTV();loadSafety();
     });
 }
 function setDot(id,st){
-    var d=document.getElementById('d-'+id),s=document.getElementById('s-'+id);
-    if(!d||!s)return;
+    var d=document.getElementById('d-'+id),s=document.getElementById('s-'+id);if(!d||!s)return;
     if(st==='live'){d.style.background='#22c55e';s.style.color='#22c55e';s.textContent='실시간';}
     else if(st==='sample'){d.style.background='#f59e0b';s.style.color='#f59e0b';s.textContent='샘플';}
     else{d.style.background='#666';s.style.color='#666';s.textContent='미연결';}
 }
 setTimeout(checkStatus,500);
 
-// ===== 마커 레이어 =====
-var ML={drain:L.layerGroup().addTo(map),quiet:L.layerGroup().addTo(map),perm:L.layerGroup().addTo(map)};
-var MK=[];
+// ===== 실시간 기상 =====
+function loadWeather(){
+    fetch(API_BASE+'/api/weather/108').then(function(r){return r.json();}).then(function(d){
+        var wp=document.getElementById('wxPanel'),wd=document.getElementById('wxData');
+        if(d.status==='live'&&d.data&&d.data.length>0){
+            var last=d.data[d.data.length-1];
+            wd.innerHTML='<div class="wx-row"><span>기온</span><span class="wx-val">'+last.temp+'°C</span></div>'
+                +'<div class="wx-row"><span>강수량</span><span class="wx-val">'+(parseFloat(last.rain)||0)+' mm</span></div>'
+                +'<div class="wx-row"><span>습도</span><span class="wx-val">'+last.humidity+'%</span></div>'
+                +'<div class="wx-row"><span>풍속</span><span class="wx-val">'+last.wind_speed+' m/s</span></div>'
+                +'<div style="font-size:8px;color:#555;margin-top:4px;">관측: '+last.time+'</div>';
+            wp.classList.add('show');
+        }else if(d.status==='sample'){
+            wd.innerHTML='<div style="font-size:9px;color:#f59e0b;">샘플 데이터 (키 발급 후 실시간 전환)</div>';
+            wp.classList.add('show');
+        }
+    }).catch(function(){});
+}
 
+// ===== 실시간 교통 =====
+function loadTraffic(){
+    fetch(API_BASE+'/api/traffic/realtime?start_idx=1&end_idx=20').then(function(r){return r.json();}).then(function(d){
+        var tp=document.getElementById('trafficPanel');
+        var items=d.data||[];
+        if(items.length===0){tp.innerHTML='<div style="color:#666;font-size:9px;padding:4px;">데이터 없음</div>';return;}
+        var h='';
+        // 23개 구간 관련 도로만 필터
+        var roads=['남산','올림픽','강남','내부순환','강변','동작','한남','사당','서부간선','북부간선'];
+        var shown=0;
+        items.forEach(function(t){
+            if(shown>=8)return;
+            var match=roads.some(function(r){return t.road_name&&t.road_name.indexOf(r)!==-1;});
+            if(!match&&shown>=5)return;
+            var spd=parseFloat(t.speed)||0;
+            var col=spd>=40?'#22c55e':spd>=20?'#f59e0b':'#ef4444';
+            var st=spd>=40?'원활':spd>=20?'서행':'정체';
+            h+='<div class="tf-item"><span class="tf-name">'+t.road_name+'</span>';
+            h+='<div class="tf-bar"><div class="tf-bar-in" style="width:'+Math.min(100,spd*1.5)+'%;background:'+col+';"></div></div>';
+            h+='<span class="tf-speed" style="color:'+col+'">'+spd+'km</span></div>';
+            shown++;
+        });
+        if(!h)h='<div style="color:#666;font-size:9px;padding:4px;">관련 도로 데이터 없음</div>';
+        tp.innerHTML=h;
+    }).catch(function(){
+        document.getElementById('trafficPanel').innerHTML='<div style="color:#666;font-size:9px;padding:4px;">연결 대기 중...</div>';
+    });
+}
+
+// ===== 마커 =====
+var ML={drain:L.layerGroup().addTo(map),quiet:L.layerGroup().addTo(map),perm:L.layerGroup().addTo(map)};var MK=[];
 D.forEach(function(s,i){
     var c=COL[s.t],sz=s.sc>=90?30:s.sc>=80?24:18;
     var ic=L.divIcon({className:'',html:'<div class="cm" style="width:'+sz+'px;height:'+sz+'px;background:'+c+';font-size:'+(sz>24?12:sz>18?10:8)+'px;">'+(i<10?(i+1):'')+'</div>',iconSize:[sz,sz],iconAnchor:[sz/2,sz/2]});
@@ -341,13 +301,10 @@ D.forEach(function(s,i){
     h+='<div class="pr"><span class="k">침수이력</span><span class="v">'+s.fl+'회/10년</span></div></div>';
     h+='<div class="pd">'+s.ds+'</div>';
     h+='<button class="pb" onclick="analyze('+i+')">🤖 AI N2B 종합 분석</button>';
-    h+='<div class="ps" id="modeHint">'+(AI_MODE==='live'?'Claude AI 실시간 분석':'N2B 전문가 분석')+'</div>';
     var mk=L.marker([s.la,s.lo],{icon:ic}).bindPopup(h,{maxWidth:260,minWidth:220});
     var cr=L.circle([s.la,s.lo],{radius:s.sc>=90?400:s.sc>=80?300:200,color:c,fillColor:c,fillOpacity:.06,weight:1,opacity:.2});
-    ML[s.t].addLayer(mk);ML[s.t].addLayer(cr);
-    MK.push({m:mk,c:cr,s:s,i:i});
+    ML[s.t].addLayer(mk);ML[s.t].addLayer(cr);MK.push({m:mk,c:cr,s:s,i:i});
 });
-
 function tog(el){var t=el.getAttribute('data-t');vis[t]=vis[t]?0:1;el.classList.toggle('on',!!vis[t]);el.querySelector('.dot').style.background=vis[t]?COL[t]:'#333';if(vis[t])map.addLayer(ML[t]);else map.removeLayer(ML[t]);}
 
 var li=document.getElementById('list');
@@ -360,196 +317,88 @@ D.slice(0,10).forEach(function(s,i){
 
 // ===== AI 분석 =====
 var curIdx=null;
-function analyze(idx){
-    var s=D[idx]; curIdx=idx;
-    var p=document.getElementById('aiP'),ct=document.getElementById('aiC');
-    document.getElementById('aiN').textContent=TI[s.t]+' '+s.n;
-    p.classList.add('show'); map.closePopup();
-    ct.innerHTML='<div class="al"><div class="sp">🤖</div><div class="mg">N2B 분석 중...</div><div class="su">경사도·강수·사고·소음 4개 레이어 교차 분석</div></div>';
-    setTimeout(function(){
-        var result = offlineAI(s);
-        renderResult(result, s);
-    }, 600);
-}
-
-// ===== AI 심화 분석 (Claude 호출) =====
-function deepAnalyze(idx){
-    if(AI_MODE!=='live'){
-        alert('AI 심화 분석은 백엔드 연결 시 사용 가능합니다.\nRender 서버가 슬립 중일 수 있습니다.');
-        return;
-    }
-    var s=D[idx];
-    var box=document.getElementById('deepBox');
-    box.innerHTML='<div class="al"><div class="sp">🤖</div><div class="mg">Claude AI 심화 분석 중...</div><div class="su">대안 비교·시공 전략·유지보수 계획 생성</div></div>';
-
+function analyze(idx){var s=D[idx];curIdx=idx;var p=document.getElementById('aiP');document.getElementById('aiN').textContent=TI[s.t]+' '+s.n;p.classList.add('show');map.closePopup();
+    document.getElementById('aiC').innerHTML='<div class="al"><div class="sp">🤖</div><div class="mg">N2B 분석 중...</div></div>';
+    setTimeout(function(){renderResult(offlineAI(s),s);},600);}
+function deepAnalyze(idx){if(AI_MODE!=='live'){alert('AI 심화 분석은 백엔드 연결 시 사용 가능합니다.');return;}
+    var s=D[idx],box=document.getElementById('deepBox');box.innerHTML='<div class="al"><div class="sp">🤖</div><div class="mg">Claude AI 심화 분석 중...</div></div>';
     var base=offlineAI(s);
-    var prompt='당신은 40년 경력의 도로포장 전문가입니다.\n\n아래 구간에 대해 기본 N2B 분석은 이미 완료되었습니다:\n- 위치: '+s.n+' (서울시)\n- 추천: '+base.recommendation+' 포장\n- 위험점수: '+base.risk_score+'/100\n- 경사도: '+s.sl+'%, 폭우: '+s.rn+'회/년, 사고: '+s.ac+'건/년\n- 교통량: '+s.tr.toLocaleString()+'대/일, 불투수면: '+s.im+'%, 침수: '+s.fl+'회/10년\n\n기본 분석을 바탕으로 **심화 분석**을 해주세요. JSON만 응답:\n{"alternatives":[{"name":"대안명","pros":"장점","cons":"단점"}],"phasing":"시공 단계 전략 2~3문장","maintenance":"유지보수 계획 2~3문장","similar_cases":"국내외 유사 성공사례 2~3문장","budget_note":"예산 확보 전략 1~2문장"}';
-
-    fetch(API_BASE+'/api/analyze',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
-    })
-    .then(function(r){return r.json();})
-    .then(function(d){
-        if(d.error){throw new Error(d.error);}
-        var text='';if(d.content){d.content.forEach(function(b){if(b.text)text+=b.text;});}
+    var prompt='당신은 40년 경력의 도로포장 전문가입니다.\n\n구간: '+s.n+' (서울시)\n추천: '+base.recommendation+' 포장, 위험점수: '+base.risk_score+'/100\n경사도: '+s.sl+'%, 폭우: '+s.rn+'회/년, 사고: '+s.ac+'건/년\n교통량: '+s.tr+'대/일, 불투수면: '+s.im+'%\n\n심화 분석을 JSON으로:\n{"alternatives":[{"name":"대안명","pros":"장점","cons":"단점"}],"phasing":"시공전략","maintenance":"유지보수","similar_cases":"유사사례","budget_note":"예산전략"}';
+    fetch(API_BASE+'/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})})
+    .then(function(r){return r.json();}).then(function(d){
+        if(d.error)throw new Error(d.error);var text='';if(d.content)d.content.forEach(function(b){if(b.text)text+=b.text;});
         var r=JSON.parse(text.replace(/```json|```/g,'').trim());
-        var h='<div style="font-size:9px;text-align:center;margin-bottom:6px;"><span class="mt mt-l">🟢 Claude AI 심화 분석 완료</span></div>';
-        if(r.alternatives&&r.alternatives.length){
-            h+='<div style="font-size:10px;font-weight:700;color:#a855f7;margin-bottom:4px;">🔄 대안 비교</div>';
-            r.alternatives.forEach(function(a){
-                h+='<div style="padding:4px 8px;margin-bottom:3px;background:rgba(168,85,247,.06);border-left:2px solid #a855f7;border-radius:0 4px 4px 0;font-size:9px;line-height:1.5;">';
-                h+='<b>'+a.name+'</b><br><span style="color:#22c55e;">✓ '+a.pros+'</span><br><span style="color:#ef4444;">✗ '+a.cons+'</span></div>';
-            });
-        }
-        if(r.phasing){h+='<div style="margin-top:6px;font-size:10px;font-weight:700;color:#06b6d4;margin-bottom:3px;">📅 시공 단계 전략</div><div style="font-size:9px;color:#aaa;line-height:1.5;margin-bottom:6px;">'+r.phasing+'</div>';}
-        if(r.maintenance){h+='<div style="font-size:10px;font-weight:700;color:#f59e0b;margin-bottom:3px;">🔧 유지보수 계획</div><div style="font-size:9px;color:#aaa;line-height:1.5;margin-bottom:6px;">'+r.maintenance+'</div>';}
-        if(r.similar_cases){h+='<div style="font-size:10px;font-weight:700;color:#22c55e;margin-bottom:3px;">🌍 유사 성공사례</div><div style="font-size:9px;color:#aaa;line-height:1.5;margin-bottom:6px;">'+r.similar_cases+'</div>';}
-        if(r.budget_note){h+='<div style="font-size:10px;font-weight:700;color:#fb923c;margin-bottom:3px;">💰 예산 확보 전략</div><div style="font-size:9px;color:#aaa;line-height:1.5;">'+r.budget_note+'</div>';}
+        var h='<div style="text-align:center;margin-bottom:6px;"><span class="mt mt-l">🟢 Claude AI 심화 분석 완료</span></div>';
+        if(r.alternatives)r.alternatives.forEach(function(a){h+='<div style="padding:4px 8px;margin-bottom:3px;background:rgba(168,85,247,.06);border-left:2px solid #a855f7;border-radius:0 4px 4px 0;font-size:9px;line-height:1.5;"><b>'+a.name+'</b><br><span style="color:#22c55e;">✓ '+a.pros+'</span><br><span style="color:#ef4444;">✗ '+a.cons+'</span></div>';});
+        if(r.phasing)h+='<div style="margin-top:6px;font-size:9px;color:#aaa;line-height:1.5;">📅 '+r.phasing+'</div>';
+        if(r.maintenance)h+='<div style="font-size:9px;color:#aaa;line-height:1.5;">🔧 '+r.maintenance+'</div>';
+        if(r.similar_cases)h+='<div style="font-size:9px;color:#aaa;line-height:1.5;">🌍 '+r.similar_cases+'</div>';
         box.innerHTML=h;
-    })
-    .catch(function(err){
-        box.innerHTML='<div class="ae">⚠️ 심화 분석 오류: '+err.message+'</div>';
-    });
+    }).catch(function(err){box.innerHTML='<div class="ae">⚠️ '+err.message+'</div>';});
 }
-
-// ===== 오프라인 분석 엔진 =====
 function offlineAI(s){
-    var factors={
-        drain:['경사도 '+s.sl+'%로 수막현상 발생 임계치(3%) '+(s.sl/3).toFixed(1)+'배 초과','연 '+s.rn+'회 집중호우 시 노면 배수 불량으로 수막 형성','우천 시 사고 '+s.ac+'건/년으로 서울시 동종 도로 대비 '+(s.ac/2.5).toFixed(1)+'배'],
-        quiet:['일 교통량 '+(s.tr/10000).toFixed(1)+'만대 수준의 고소음 구간','연간 소음 민원 '+s.cm+'건으로 주거지 피해 심각','야간 대형차량 통행으로 저주파 소음 및 수면 장애 유발'],
-        perm:['불투수면율 '+s.im+'%로 도시 열섬 및 침수 취약','10년간 침수 이력 '+s.fl+'회로 반복 피해 지역','보행 공간 우수 침투 불가로 하수 부하 가중']
-    };
-    var n2bs={
-        drain:{n:s.n+' 구간에 배수성 포장이 시급하다',b1:'현행 PMS 기반 포장 관리가 균열·소성변형 등 물리적 손상을 효과적으로 탐지하고, 전문가 현장 답사를 통한 종합 판단이 이루어지고 있음',b2:'경사도·강수빈도·사고이력 3개 레이어를 동시에 교차 분석하는 시스템이 부재하여, 수막현상 위험 구간의 사전 예방적 포장 전환 판단이 불가능'},
-        quiet:{n:s.n+' 구간에 저소음 포장이 필요하다',b1:'방음벽·방음터널 등 기존 소음 차단 시설이 중·고주파 소음을 일정 부분 감소시키고 있음',b2:'소음 발생원(타이어-노면 접촉)을 근본적으로 줄이는 포장 재료 전환이 이루어지지 않아, 방음벽으로 차단할 수 없는 저주파 소음과 회절 소음이 주거지에 전달'},
-        perm:{n:s.n+' 구간에 투수성 포장이 필요하다',b1:'하수도 확장·빗물펌프장 등 기존 배수 인프라 투자가 일반 강수량에 대응하고 있음',b2:'극한 강수 시 불투수면 '+s.im+'%의 지표면이 유출량을 감당하지 못하며, 포장 자체의 우수 침투 기능이 부재하여 근본적 침수 예방이 불가능'}
-    };
+    var factors={drain:['경사도 '+s.sl+'%로 수막 임계치 '+(s.sl/3).toFixed(1)+'배 초과','연 '+s.rn+'회 집중호우 시 배수 불량','우천 사고 '+s.ac+'건/년'],
+        quiet:['일 '+(s.tr/10000).toFixed(1)+'만대 고소음','소음 민원 '+s.cm+'건/년','야간 저주파 소음'],
+        perm:['불투수면 '+s.im+'%','10년 침수 '+s.fl+'회','우수 침투 불가']};
+    var n2bs={drain:{n:s.n+' 배수성 포장 시급',b1:'현행 PMS가 물리적 손상을 탐지하고 있음',b2:'경사도·강수·사고 3레이어 교차 분석 시스템 부재'},
+        quiet:{n:s.n+' 저소음 포장 필요',b1:'방음벽이 중·고주파 소음을 감소시키고 있음',b2:'발생원(타이어-노면) 자체를 줄이는 포장 전환 미시행'},
+        perm:{n:s.n+' 투수성 포장 필요',b1:'하수도·펌프장이 일반 강수에 대응',b2:'극한 강수 시 불투수면 '+s.im+'%가 유출량 감당 불가'}};
     var cost=s.t==='drain'?Math.round(s.sc*.08*10)/10:s.t==='quiet'?Math.round(s.sc*.06*10)/10:Math.round(s.sc*.04*10)/10;
     var roi=Math.max(2,Math.min(8,s.t==='drain'?Math.round(s.ac*1.2*10)/10:s.t==='quiet'?Math.round(s.cm*.3*10)/10:Math.round(s.fl*2.5*10)/10));
-    var urg=s.sc>=90?'긴급':s.sc>=80?'높음':s.sc>=70?'보통':'낮음';
-    var imp=s.t==='drain'?'우천 시 사고 약 '+Math.round(s.ac*.35)+'건 감소 및 수막현상 80% 해소':s.t==='quiet'?'주간 3~5dB, 야간 5~8dB 소음 저감으로 민원 60% 감소':'우수 침투율 70% 확보로 침수 피해 '+Math.round(s.fl*.6)+'회 감소';
-    var det=s.t==='drain'?s.n+'은 경사도 '+s.sl+'%에 연간 '+s.rn+'회의 집중호우가 발생하여 수막현상 위험이 매우 높습니다. 우천 시 '+s.ac+'건의 사고가 발생하며, 배수성 포장(다공성 아스팔트) 적용 시 수막 즉시 제거, 야간 시인성 향상, 소음 저감 등 복합 효과가 기대됩니다. 국내외 유사 사례에서 우천 사고율 30~40% 감소가 검증되었습니다.':s.t==='quiet'?s.n+'은 일 '+(s.tr/10000).toFixed(1)+'만대가 통행하며, 인접 주거지에서 연간 '+s.cm+'건의 소음 민원이 접수됩니다. 기존 방음벽만으로는 저주파 소음 차단에 한계가 있어, 발생원 자체를 줄이는 저소음 포장이 효과적입니다. SMA 또는 고무 혼합 저소음 포장 적용 시 3~8dB 소음 저감이 가능하며, 이는 체감 소음량 약 50% 감소에 해당합니다.':s.n+'은 불투수면율 '+s.im+'%로 서울시 상위 수준이며, 10년간 '+s.fl+'회의 침수 피해가 발생했습니다. 보행로를 투수성 블록으로 전환하면 시간당 300mm 이상의 침투 능력을 확보하여 지표 유출량을 크게 줄일 수 있습니다. 지하수 함양, 도시 열섬 완화, 하수도 부하 저감 등 다중 편익을 제공합니다.';
-    return {recommendation:TN[s.t],risk_score:s.sc,urgency:urg,key_factors:factors[s.t],n2b:n2bs[s.t],improvement:imp,cost_억:cost,roi:roi,detail:det};
+    var urg=s.sc>=90?'긴급':s.sc>=80?'높음':'보통';
+    var imp=s.t==='drain'?'우천 사고 약 '+Math.round(s.ac*.35)+'건 감소':s.t==='quiet'?'소음 3~8dB 저감, 민원 60% 감소':'침수 피해 '+Math.round(s.fl*.6)+'회 감소';
+    return {recommendation:TN[s.t],risk_score:s.sc,urgency:urg,key_factors:factors[s.t],n2b:n2bs[s.t],improvement:imp,cost_억:cost,roi:roi};
 }
-
-// ===== 결과 렌더링 =====
 function renderResult(r,s){
-    var c=COL[s.t];
-    var uc={'긴급':'#ef4444','높음':'#f59e0b','보통':'#22c55e','낮음':'#64748b'};
-    var h='<div style="text-align:center;margin-bottom:8px;"><span class="mt mt-o">📊 N2B 구조화 분석 (고정 데이터 기반)</span></div>';
-    h+='<div class="av"><div class="ll">판정 결과</div><div class="re" style="color:'+c+'">'+r.recommendation+' 포장</div>';
-    h+='<div class="vs"><div><div class="sl">위험점수</div><div class="sv2" style="color:#f0b429">'+r.risk_score+'</div></div>';
+    var c=COL[s.t],uc={'긴급':'#ef4444','높음':'#f59e0b','보통':'#22c55e'};
+    var h='<div style="text-align:center;margin-bottom:8px;"><span class="mt mt-o">📊 N2B 분석</span></div>';
+    h+='<div class="av"><div class="ll">판정</div><div class="re" style="color:'+c+'">'+r.recommendation+' 포장</div>';
+    h+='<div class="vs"><div><div class="sl">위험</div><div class="sv2" style="color:#f0b429">'+r.risk_score+'</div></div>';
     h+='<div><div class="sl">긴급도</div><div class="sv2" style="color:'+(uc[r.urgency]||'#888')+'">'+r.urgency+'</div></div>';
     h+='<div><div class="sl">ROI</div><div class="sv2" style="color:#22c55e">'+r.roi+'배</div></div></div></div>';
-    h+='<div class="af"><div class="ti">⚠️ 핵심 위험 요인</div>';
-    if(r.key_factors)r.key_factors.forEach(function(f){h+='<div class="fi">'+f+'</div>';});
-    h+='</div>';
-    h+='<div class="an2"><div class="ti">🔬 N2B 프레임워크 분석</div>';
-    if(r.n2b){
-        h+='<div class="li"><span class="ln">N:</span> '+r.n2b.n+'</div>';
-        h+='<div class="li"><span class="lb2">B₁ (현재 BP 강점):</span><br><span style="color:#888">'+r.n2b.b1+'</span></div>';
-        h+='<div class="li"><span class="lb2">B₂ (빈틈/한계):</span><br>'+r.n2b.b2+'</div>';
-    }
-    h+='</div>';
-    h+='<div class="ac2"><div style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);"><div class="cl">예상 비용</div><div class="cv" style="color:#22c55e">'+r.cost_억+'억</div></div>';
-    h+='<div style="background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2);"><div class="cl">예상 효과</div><div class="ct2" style="color:#a855f7">'+r.improvement+'</div></div></div>';
-    h+='<div class="ad2"><div class="dti">📋 상세 분석</div>'+r.detail+'</div>';
-
-    if(AI_MODE==='live'){
-        h+='<button class="art" style="background:rgba(168,85,247,.15);border-color:rgba(168,85,247,.4);color:#a855f7;" onclick="deepAnalyze('+curIdx+')">🤖 AI 심화 분석 (대안 비교·시공 전략·유사 사례)</button>';
-        h+='<div style="font-size:8px;color:#666;text-align:center;margin-top:3px;">Claude AI가 추가 인사이트를 생성합니다</div>';
-    } else {
-        h+='<button class="art" style="opacity:.5;cursor:default;">🤖 AI 심화 분석 (백엔드 연결 시 활성화)</button>';
-    }
+    h+='<div class="af"><div class="ti">⚠️ 위험 요인</div>';r.key_factors.forEach(function(f){h+='<div class="fi">'+f+'</div>';});h+='</div>';
+    h+='<div class="an2"><div class="ti">🔬 N2B 분석</div>';
+    h+='<div class="li"><span class="ln">N:</span> '+r.n2b.n+'</div>';
+    h+='<div class="li"><span class="lb2">B₁:</span> <span style="color:#888">'+r.n2b.b1+'</span></div>';
+    h+='<div class="li"><span class="lb2">B₂:</span> '+r.n2b.b2+'</div></div>';
+    h+='<div class="ac2"><div style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);"><div class="cl">비용</div><div class="cv" style="color:#22c55e">'+r.cost_억+'억</div></div>';
+    h+='<div style="background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2);"><div class="cl">효과</div><div class="ct2" style="color:#a855f7">'+r.improvement+'</div></div></div>';
+    if(AI_MODE==='live')h+='<button class="art" style="background:rgba(168,85,247,.15);border-color:rgba(168,85,247,.4);color:#a855f7;" onclick="deepAnalyze('+curIdx+')">🤖 AI 심화 분석</button>';
+    else h+='<button class="art" style="opacity:.5;cursor:default;">🤖 AI 심화 (백엔드 연결 시)</button>';
     h+='<div id="deepBox" style="margin-top:8px;"></div>';
-
     document.getElementById('aiC').innerHTML=h;
 }
-
 function closeAI(){document.getElementById('aiP').classList.remove('show');}
 
-// ===== CCTV 레이어 =====
-var cctvLayer=L.layerGroup().addTo(map);
-var cctvVisible=true;
-
+// ===== CCTV =====
+var cctvLayer=L.layerGroup().addTo(map),cctvVisible=true;
 function loadCCTV(){
-    fetch(API_BASE+'/api/cctv?lat=37.5665&lng=126.978&radius=0.15')
-    .then(function(r){return r.json();})
-    .then(function(d){
-        var items=d.data||[];
-        document.getElementById('cctvCnt').textContent=items.length;
-        items.forEach(function(c){
-            if(!c.lat||!c.lng)return;
-            var ic=L.divIcon({className:'',html:'<div style="width:12px;height:12px;background:#facc15;border:2px solid #fff;border-radius:3px;box-shadow:0 1px 4px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;font-size:7px;">📹</div>',iconSize:[12,12],iconAnchor:[6,6]});
-            var hasUrl=c.url&&c.url.length>10;
-            var popup='<div style="font-family:-apple-system,Malgun Gothic,sans-serif;">';
-            popup+='<div style="font-size:12px;font-weight:900;color:#facc15;margin-bottom:6px;">📹 '+c.name+'</div>';
-            popup+='<div style="font-size:9px;color:#888;margin-bottom:4px;">위치: '+c.lat.toFixed(4)+', '+c.lng.toFixed(4)+'</div>';
-            if(hasUrl){
-                popup+='<div style="margin:8px 0;text-align:center;"><img src="'+c.url+'" style="max-width:200px;border-radius:6px;border:1px solid rgba(250,204,21,.3);" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\';"/>';
-                popup+='<div style="display:none;padding:10px;background:rgba(250,204,21,.08);border-radius:6px;font-size:9px;color:#facc15;">영상 로딩 실패 — 직접 접속 필요</div></div>';
-                popup+='<a href="'+c.url+'" target="_blank" style="display:block;text-align:center;padding:6px;background:rgba(250,204,21,.12);border:1px solid rgba(250,204,21,.3);border-radius:6px;color:#facc15;font-size:9px;font-weight:700;text-decoration:none;">🔗 실시간 영상 열기</a>';
-            } else {
-                popup+='<div style="padding:8px;background:rgba(250,204,21,.08);border:1px solid rgba(250,204,21,.2);border-radius:6px;font-size:9px;color:#aaa;text-align:center;">'+(d.status==='sample'?'샘플 데이터 — ITS API 키 등록 시 실시간 영상 연결':'영상 URL 없음')+'</div>';
-            }
-            popup+='</div>';
-            var mk=L.marker([c.lat,c.lng],{icon:ic}).bindPopup(popup,{maxWidth:240,minWidth:180});
-            cctvLayer.addLayer(mk);
+    fetch(API_BASE+'/api/cctv?lat=37.5665&lng=126.978&radius=0.15').then(function(r){return r.json();}).then(function(d){
+        var items=d.data||[];document.getElementById('cctvCnt').textContent=items.length;
+        items.forEach(function(c){if(!c.lat||!c.lng)return;
+            var ic=L.divIcon({className:'',html:'<div style="width:12px;height:12px;background:#facc15;border:2px solid #fff;border-radius:3px;box-shadow:0 1px 4px rgba(0,0,0,.4);font-size:7px;display:flex;align-items:center;justify-content:center;">📹</div>',iconSize:[12,12],iconAnchor:[6,6]});
+            var popup='<div style="font-size:12px;font-weight:900;color:#facc15;margin-bottom:4px;">📹 '+c.name+'</div><div style="font-size:9px;color:#888;">'+c.lat.toFixed(4)+', '+c.lng.toFixed(4)+'</div>';
+            cctvLayer.addLayer(L.marker([c.lat,c.lng],{icon:ic}).bindPopup(popup,{maxWidth:200}));
         });
-    })
-    .catch(function(){
-        document.getElementById('cctvCnt').textContent='–';
-    });
+    }).catch(function(){document.getElementById('cctvCnt').textContent='–';});
 }
+function togCCTV(el){cctvVisible=!cctvVisible;el.classList.toggle('on',cctvVisible);el.querySelector('.dot').style.background=cctvVisible?'#facc15':'#333';if(cctvVisible)map.addLayer(cctvLayer);else map.removeLayer(cctvLayer);}
 
-function togCCTV(el){
-    cctvVisible=!cctvVisible;
-    el.classList.toggle('on',cctvVisible);
-    el.querySelector('.dot').style.background=cctvVisible?'#facc15':'#333';
-    if(cctvVisible)map.addLayer(cctvLayer);else map.removeLayer(cctvLayer);
-}
-
-// ===== 도로안전시설 점검 레이어 =====
-var safetyLayer=L.layerGroup().addTo(map);
-var safetyVisible=true;
+// ===== 안전시설 =====
+var safetyLayer=L.layerGroup().addTo(map),safetyVisible=true;
 var SC={'양호':'#22c55e','주의':'#f59e0b','교체필요':'#ef4444'};
-var SIcon={'가드레일':'🛡️','시선유도시설':'🔶','충격흡수시설':'🟥','도로표지':'🪧','도로반사경':'🪞','신호등':'🚦','배수시설':'🚿','방음벽':'🧱','조명시설':'💡','소방시설':'🧯','과속방지시설':'⚠️','교량시설':'🌉','보행시설':'🚶','보도블록':'🧱'};
-
 function loadSafety(){
-    fetch(API_BASE+'/api/safety-facilities?lat=37.5665&lng=126.978&radius=0.15')
-    .then(function(r){return r.json();})
-    .then(function(d){
-        var items=d.data||[];
-        document.getElementById('safetyCnt').textContent=items.length;
+    fetch(API_BASE+'/api/safety-facilities?lat=37.5665&lng=126.978&radius=0.15').then(function(r){return r.json();}).then(function(d){
+        var items=d.data||[];document.getElementById('safetyCnt').textContent=items.length;
         items.forEach(function(f){
             var sc=SC[f.status]||'#888';
-            var si=SIcon[f.type]||'🔧';
-            var ic=L.divIcon({className:'',html:'<div style="width:14px;height:14px;background:'+sc+';border:2px solid #fff;border-radius:3px;box-shadow:0 1px 4px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;font-size:8px;">'+si+'</div>',iconSize:[14,14],iconAnchor:[7,7]});
-            var gc={'A':'#22c55e','B':'#86efac','C':'#f59e0b','D':'#ef4444'};
-            var popup='<div style="font-family:-apple-system,Malgun Gothic,sans-serif;">';
-            popup+='<div style="font-size:12px;font-weight:900;color:#fb923c;margin-bottom:6px;">🔧 '+f.name+'</div>';
-            popup+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;font-size:10px;margin-bottom:6px;">';
-            popup+='<div style="display:flex;justify-content:space-between;"><span style="color:#666;">유형</span><span style="font-weight:700;">'+f.type+'</span></div>';
-            popup+='<div style="display:flex;justify-content:space-between;"><span style="color:#666;">등급</span><span style="font-weight:900;color:'+(gc[f.grade]||'#888')+'">'+f.grade+'등급</span></div>';
-            popup+='<div style="display:flex;justify-content:space-between;"><span style="color:#666;">상태</span><span style="font-weight:700;color:'+sc+'">'+f.status+'</span></div>';
-            popup+='<div style="display:flex;justify-content:space-between;"><span style="color:#666;">점검일</span><span style="font-weight:700;">'+f.last_check+'</span></div>';
-            popup+='</div>';
-            popup+='<div style="padding:6px;background:rgba(251,146,60,.08);border:1px solid rgba(251,146,60,.2);border-radius:6px;font-size:9px;color:#ccc;line-height:1.4;">📋 '+f.issue+'</div>';
-            popup+='</div>';
-            var mk=L.marker([f.lat,f.lng],{icon:ic}).bindPopup(popup,{maxWidth:240,minWidth:180});
-            safetyLayer.addLayer(mk);
+            var ic=L.divIcon({className:'',html:'<div style="width:14px;height:14px;background:'+sc+';border:2px solid #fff;border-radius:3px;box-shadow:0 1px 4px rgba(0,0,0,.4);font-size:8px;display:flex;align-items:center;justify-content:center;">🔧</div>',iconSize:[14,14],iconAnchor:[7,7]});
+            var popup='<div style="font-size:12px;font-weight:900;color:#fb923c;margin-bottom:4px;">🔧 '+f.name+'</div><div style="font-size:9px;"><b style="color:'+sc+'">'+f.status+'</b> ('+f.grade+'등급) · 점검: '+f.last_check+'</div><div style="font-size:9px;color:#aaa;margin-top:4px;">'+f.issue+'</div>';
+            safetyLayer.addLayer(L.marker([f.lat,f.lng],{icon:ic}).bindPopup(popup,{maxWidth:220}));
         });
     }).catch(function(){document.getElementById('safetyCnt').textContent='–';});
 }
-
-function togSafety(el){
-    safetyVisible=!safetyVisible;
-    el.classList.toggle('on',safetyVisible);
-    el.querySelector('.dot').style.background=safetyVisible?'#fb923c':'#333';
-    if(safetyVisible)map.addLayer(safetyLayer);else map.removeLayer(safetyLayer);
-}
+function togSafety(el){safetyVisible=!safetyVisible;el.classList.toggle('on',safetyVisible);el.querySelector('.dot').style.background=safetyVisible?'#fb923c':'#333';if(safetyVisible)map.addLayer(safetyLayer);else map.removeLayer(safetyLayer);}
 </script>
 </body>
 </html>
