@@ -24,8 +24,8 @@ from datetime import datetime, timedelta
 # ============================================
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "여기에_API_키_입력")
 VWORLD_API_KEY    = os.getenv("VWORLD_API_KEY", "")
-DATA_GO_KR_KEY    = os.getenv("DATA_GO_KR_KEY", "")      # ASOS + TAAS 공용
-SEOUL_DATA_KEY    = os.getenv("SEOUL_DATA_KEY", "")        # 서울 열린데이터광장
+DATA_GO_KR_KEY    = os.getenv("DATA_GO_KR_KEY", "")
+SEOUL_DATA_KEY    = os.getenv("SEOUL_DATA_KEY", "")
 ITS_CCTV_KEY      = os.getenv("ITS_CCTV_KEY", "")
 
 app = FastAPI(title="기능성 포장 플랫폼 API", version="1.2")
@@ -79,7 +79,6 @@ async def analyze(request: Request):
 # ============================================
 @app.get("/api/weather/{station_id}")
 async def get_weather(station_id: str, date: str = ""):
-    """ASOS 시간자료 - station_id: 108=서울"""
     if DATA_GO_KR_KEY:
         if not date: date = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
         try:
@@ -99,7 +98,6 @@ async def get_weather(station_id: str, date: str = ""):
 
 @app.get("/api/weather-daily/{station_id}")
 async def get_weather_daily(station_id: str, start_date: str = "", end_date: str = ""):
-    """ASOS 일자료"""
     if DATA_GO_KR_KEY:
         if not end_date: end_date = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
         if not start_date: start_date = (datetime.now() - timedelta(days=30)).strftime("%Y%m%d")
@@ -123,7 +121,6 @@ async def get_weather_daily(station_id: str, start_date: str = "", end_date: str
 # ============================================
 @app.get("/api/accident/{region_code}")
 async def get_accident(region_code: str, year: str = "2024"):
-    """사고유형별 교통사고 통계 - region_code: 11=서울"""
     if DATA_GO_KR_KEY:
         try:
             async with httpx.AsyncClient(timeout=30.0) as c:
@@ -144,11 +141,10 @@ async def get_accident(region_code: str, year: str = "2024"):
         "top_accident_spots":[{"name":"남산순환로","count":8},{"name":"한남IC","count":9},{"name":"동작대교램프","count":7}]}}
 
 # ============================================
-#  TOPIS 서울시 실시간 교통 (열린데이터광장)
+#  TOPIS 서울시 실시간 교통
 # ============================================
 @app.get("/api/traffic/realtime")
 async def get_realtime_traffic(start_idx: int = 1, end_idx: int = 100):
-    """서울시 실시간 도로 소통 정보"""
     if SEOUL_DATA_KEY:
         try:
             async with httpx.AsyncClient(timeout=30.0) as c:
@@ -175,10 +171,8 @@ async def get_cctv(lat: float = 37.55, lng: float = 126.98, radius: float = 0.15
     """
     ITS CCTV 정보 조회
     - cctv_type: 'ex'=고속도로, 'its'=국도, 'all'=전체
-    - 서울시는 주로 'its' 타입
     """
     if not ITS_CCTV_KEY:
-        # API 키 없으면 샘플 데이터 반환
         samples = [
             {"name":"남산1터널 입구","lat":37.553,"lng":126.985,"url":"","format":"image"},
             {"name":"강남역 교차로","lat":37.498,"lng":127.028,"url":"","format":"image"},
@@ -191,23 +185,20 @@ async def get_cctv(lat: float = 37.55, lng: float = 126.98, radius: float = 0.15
             {"name":"한남IC","lat":37.535,"lng":127.002,"url":"","format":"image"},
             {"name":"사당역","lat":37.478,"lng":126.983,"url":"","format":"image"}
         ]
-        return {"status":"sample","message":"ITS CCTV API 키 미설정 → 샘플","count":len(samples),"data":samples}
+        return {"status":"sample","message":"ITS CCTV API 키 미설정","count":len(samples),"data":samples}
     
-    # API 키가 있으면 실제 호출
     try:
-        # 서울시 영역으로 범위 확대 (반경이 너무 좁으면 결과 없음)
         min_x = lng - radius
         max_x = lng + radius
         min_y = lat - radius
         max_y = lat + radius
         
         async with httpx.AsyncClient(timeout=30.0, verify=False) as c:
-            # ITS API 호출 - type 파라미터 중요!
             url = "https://openapi.its.go.kr:9443/cctvInfo"
             params = {
                 "apiKey": ITS_CCTV_KEY,
-                "type": cctv_type,  # 'ex', 'its', 'all'
-                "cctvType": "2",    # 1: 실시간스트리밍, 2: 동영상파일
+                "type": cctv_type,
+                "cctvType": "2",
                 "minX": str(min_x),
                 "maxX": str(max_x),
                 "minY": str(min_y),
@@ -217,32 +208,17 @@ async def get_cctv(lat: float = 37.55, lng: float = 126.98, radius: float = 0.15
             
             r = await c.get(url, params=params)
             
-            # 응답 상태 확인
             if r.status_code != 200:
-                return {
-                    "status": "error",
-                    "message": f"ITS API 응답 오류: {r.status_code}",
-                    "count": 0,
-                    "data": []
-                }
+                return {"status":"error","message":f"ITS API 오류: {r.status_code}","count":0,"data":[]}
             
-            # JSON 파싱
             try:
                 data = r.json()
-            except Exception as json_err:
-                return {
-                    "status": "error",
-                    "message": f"JSON 파싱 오류: {str(json_err)}",
-                    "raw_response": r.text[:500],
-                    "count": 0,
-                    "data": []
-                }
+            except:
+                return {"status":"error","message":"JSON 파싱 오류","count":0,"data":[]}
             
-            # 데이터 추출
             cctvs = []
             response_data = data.get("response", {})
             
-            # 데이터가 있는지 확인
             if "data" in response_data:
                 items = response_data["data"]
                 if items is None:
@@ -260,15 +236,13 @@ async def get_cctv(lat: float = 37.55, lng: float = 126.98, radius: float = 0.15
                             "format": item.get("cctvformat", ""),
                             "road": item.get("roadsectionid", "")
                         }
-                        # 유효한 좌표만 추가
                         if cctv_info["lat"] != 0 and cctv_info["lng"] != 0:
                             cctvs.append(cctv_info)
-                    except Exception:
+                    except:
                         continue
             
-            # 결과 없으면 다른 타입으로 재시도
+            # 결과 없으면 'all' 타입으로 재시도
             if len(cctvs) == 0 and cctv_type != "all":
-                # 'all' 타입으로 재시도
                 params["type"] = "all"
                 r2 = await c.get(url, params=params)
                 if r2.status_code == 200:
@@ -298,21 +272,12 @@ async def get_cctv(lat: float = 37.55, lng: float = 126.98, radius: float = 0.15
                     except:
                         pass
             
-            return {
-                "status": "live",
-                "count": len(cctvs),
-                "search_area": {
-                    "center": {"lat": lat, "lng": lng},
-                    "radius": radius,
-                    "bounds": {"minX": min_x, "maxX": max_x, "minY": min_y, "maxY": max_y}
-                },
-                "data": cctvs
-            }
+            return {"status":"live","count":len(cctvs),"search_area":{"lat":lat,"lng":lng,"radius":radius},"data":cctvs}
             
     except httpx.TimeoutException:
-        return {"status": "error", "message": "ITS API 타임아웃", "count": 0, "data": []}
+        return {"status":"error","message":"ITS API 타임아웃","count":0,"data":[]}
     except Exception as e:
-        return {"status": "error", "message": f"CCTV 조회 오류: {str(e)}", "count": 0, "data": []}
+        return {"status":"error","message":str(e),"count":0,"data":[]}
 
 # ============================================
 #  도로안전시설 점검
@@ -360,15 +325,4 @@ async def root():
 
 if __name__ == "__main__":
     import uvicorn
-    k = ANTHROPIC_API_KEY != "여기에_API_키_입력"
-    print("\n" + "="*55)
-    print("  🛣️  기능성 포장 플랫폼 v1.2 — 공공 API 통합")
-    print("="*55)
-    print(f"\n  📡 Claude AI  : {'✅' if k else '❌'}")
-    print(f"  🗺️  VWorld     : {'✅' if VWORLD_API_KEY else '❌'}")
-    print(f"  🌧️  ASOS 기상  : {'✅' if DATA_GO_KR_KEY else '⬜'}")
-    print(f"  🚗 TAAS 사고  : {'✅' if DATA_GO_KR_KEY else '⬜'}")
-    print(f"  🚦 TOPIS 교통 : {'✅' if SEOUL_DATA_KEY else '⬜'}")
-    print(f"  📹 ITS CCTV   : {'✅' if ITS_CCTV_KEY else '⬜'}")
-    print(f"\n  🌐 http://localhost:8000\n{'='*55}\n")
     uvicorn.run(app, host="0.0.0.0", port=8000)
