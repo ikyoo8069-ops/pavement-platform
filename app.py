@@ -1,13 +1,13 @@
 """
 ========================================================
-  기능성 포장 필요구간 자동 탐색 플랫폼 — 백엔드 서버 v1.1
+  기능성 포장 필요구간 자동 탐색 플랫폼 — 백엔드 서버 v1.2
 ========================================================
   통합 공공 API:
     - VWorld 배경지도/DEM (국토정보플랫폼)
     - ASOS 기상관측 (기상청, data.go.kr)
     - TAAS 교통사고 (도로교통공단, data.go.kr)
     - TOPIS 실시간 교통 (서울시 열린데이터광장)
-    - ITS CCTV (its.go.kr)
+    - ITS CCTV (its.go.kr) - 수정됨
     - Claude AI N2B 분석
 ========================================================
 """
@@ -28,7 +28,7 @@ DATA_GO_KR_KEY    = os.getenv("DATA_GO_KR_KEY", "")      # ASOS + TAAS 공용
 SEOUL_DATA_KEY    = os.getenv("SEOUL_DATA_KEY", "")        # 서울 열린데이터광장
 ITS_CCTV_KEY      = os.getenv("ITS_CCTV_KEY", "")
 
-app = FastAPI(title="기능성 포장 플랫폼 API", version="1.1")
+app = FastAPI(title="기능성 포장 플랫폼 API", version="1.2")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 # ============================================
@@ -168,25 +168,151 @@ async def get_realtime_traffic(start_idx: int = 1, end_idx: int = 100):
         {"road_name":"강남대로","speed":18,"status":"정체"},{"road_name":"내부순환로","speed":42,"status":"서행"},{"road_name":"강변북로","speed":65,"status":"원활"}]}
 
 # ============================================
-#  ITS CCTV
+#  ITS CCTV (수정됨 - 에러 처리 강화)
 # ============================================
 @app.get("/api/cctv")
-async def get_cctv(lat: float = 37.55, lng: float = 126.98, radius: float = 0.05):
-    if ITS_CCTV_KEY:
-        async with httpx.AsyncClient(timeout=30.0) as c:
-            r = await c.get("https://openapi.its.go.kr:9443/cctvInfo",
-                params={"apiKey":ITS_CCTV_KEY,"type":"all","cctvType":"2","minX":str(lng-radius),"maxX":str(lng+radius),"minY":str(lat-radius),"maxY":str(lat+radius),"getType":"json"})
-            data = r.json(); cctvs = []
-            if "response" in data and "data" in data["response"]:
-                for item in data["response"]["data"]:
-                    cctvs.append({"name":item.get("cctvname",""),"lat":float(item.get("coordy",0)),"lng":float(item.get("coordx",0)),"url":item.get("cctvurl",""),"format":item.get("cctvformat","")})
-            return {"status":"live","count":len(cctvs),"data":cctvs}
-    samples = [{"name":"남산1터널 입구","lat":37.553,"lng":126.985,"url":"","format":"image"},{"name":"강남역 교차로","lat":37.498,"lng":127.028,"url":"","format":"image"},
-        {"name":"올림픽대로 잠실대교","lat":37.519,"lng":127.078,"url":"","format":"image"},{"name":"북악터널 입구","lat":37.591,"lng":126.968,"url":"","format":"image"},
-        {"name":"신림사거리","lat":37.485,"lng":126.930,"url":"","format":"image"},{"name":"인왕산터널","lat":37.580,"lng":126.959,"url":"","format":"image"},
-        {"name":"내부순환 정릉입구","lat":37.604,"lng":127.010,"url":"","format":"image"},{"name":"동작대교 남단","lat":37.506,"lng":126.983,"url":"","format":"image"},
-        {"name":"한남IC","lat":37.535,"lng":127.002,"url":"","format":"image"},{"name":"사당역","lat":37.478,"lng":126.983,"url":"","format":"image"}]
-    return {"status":"sample","message":"ITS CCTV API 키 미설정 → 샘플","count":len(samples),"data":samples}
+async def get_cctv(lat: float = 37.55, lng: float = 126.98, radius: float = 0.15, cctv_type: str = "its"):
+    """
+    ITS CCTV 정보 조회
+    - cctv_type: 'ex'=고속도로, 'its'=국도, 'all'=전체
+    - 서울시는 주로 'its' 타입
+    """
+    if not ITS_CCTV_KEY:
+        # API 키 없으면 샘플 데이터 반환
+        samples = [
+            {"name":"남산1터널 입구","lat":37.553,"lng":126.985,"url":"","format":"image"},
+            {"name":"강남역 교차로","lat":37.498,"lng":127.028,"url":"","format":"image"},
+            {"name":"올림픽대로 잠실대교","lat":37.519,"lng":127.078,"url":"","format":"image"},
+            {"name":"북악터널 입구","lat":37.591,"lng":126.968,"url":"","format":"image"},
+            {"name":"신림사거리","lat":37.485,"lng":126.930,"url":"","format":"image"},
+            {"name":"인왕산터널","lat":37.580,"lng":126.959,"url":"","format":"image"},
+            {"name":"내부순환 정릉입구","lat":37.604,"lng":127.010,"url":"","format":"image"},
+            {"name":"동작대교 남단","lat":37.506,"lng":126.983,"url":"","format":"image"},
+            {"name":"한남IC","lat":37.535,"lng":127.002,"url":"","format":"image"},
+            {"name":"사당역","lat":37.478,"lng":126.983,"url":"","format":"image"}
+        ]
+        return {"status":"sample","message":"ITS CCTV API 키 미설정 → 샘플","count":len(samples),"data":samples}
+    
+    # API 키가 있으면 실제 호출
+    try:
+        # 서울시 영역으로 범위 확대 (반경이 너무 좁으면 결과 없음)
+        min_x = lng - radius
+        max_x = lng + radius
+        min_y = lat - radius
+        max_y = lat + radius
+        
+        async with httpx.AsyncClient(timeout=30.0, verify=False) as c:
+            # ITS API 호출 - type 파라미터 중요!
+            url = "https://openapi.its.go.kr:9443/cctvInfo"
+            params = {
+                "apiKey": ITS_CCTV_KEY,
+                "type": cctv_type,  # 'ex', 'its', 'all'
+                "cctvType": "2",    # 1: 실시간스트리밍, 2: 동영상파일
+                "minX": str(min_x),
+                "maxX": str(max_x),
+                "minY": str(min_y),
+                "maxY": str(max_y),
+                "getType": "json"
+            }
+            
+            r = await c.get(url, params=params)
+            
+            # 응답 상태 확인
+            if r.status_code != 200:
+                return {
+                    "status": "error",
+                    "message": f"ITS API 응답 오류: {r.status_code}",
+                    "count": 0,
+                    "data": []
+                }
+            
+            # JSON 파싱
+            try:
+                data = r.json()
+            except Exception as json_err:
+                return {
+                    "status": "error",
+                    "message": f"JSON 파싱 오류: {str(json_err)}",
+                    "raw_response": r.text[:500],
+                    "count": 0,
+                    "data": []
+                }
+            
+            # 데이터 추출
+            cctvs = []
+            response_data = data.get("response", {})
+            
+            # 데이터가 있는지 확인
+            if "data" in response_data:
+                items = response_data["data"]
+                if items is None:
+                    items = []
+                elif not isinstance(items, list):
+                    items = [items]
+                    
+                for item in items:
+                    try:
+                        cctv_info = {
+                            "name": item.get("cctvname", "이름없음"),
+                            "lat": float(item.get("coordy", 0)),
+                            "lng": float(item.get("coordx", 0)),
+                            "url": item.get("cctvurl", ""),
+                            "format": item.get("cctvformat", ""),
+                            "road": item.get("roadsectionid", "")
+                        }
+                        # 유효한 좌표만 추가
+                        if cctv_info["lat"] != 0 and cctv_info["lng"] != 0:
+                            cctvs.append(cctv_info)
+                    except Exception:
+                        continue
+            
+            # 결과 없으면 다른 타입으로 재시도
+            if len(cctvs) == 0 and cctv_type != "all":
+                # 'all' 타입으로 재시도
+                params["type"] = "all"
+                r2 = await c.get(url, params=params)
+                if r2.status_code == 200:
+                    try:
+                        data2 = r2.json()
+                        response_data2 = data2.get("response", {})
+                        if "data" in response_data2:
+                            items2 = response_data2["data"]
+                            if items2 is None:
+                                items2 = []
+                            elif not isinstance(items2, list):
+                                items2 = [items2]
+                            for item in items2:
+                                try:
+                                    cctv_info = {
+                                        "name": item.get("cctvname", "이름없음"),
+                                        "lat": float(item.get("coordy", 0)),
+                                        "lng": float(item.get("coordx", 0)),
+                                        "url": item.get("cctvurl", ""),
+                                        "format": item.get("cctvformat", ""),
+                                        "road": item.get("roadsectionid", "")
+                                    }
+                                    if cctv_info["lat"] != 0 and cctv_info["lng"] != 0:
+                                        cctvs.append(cctv_info)
+                                except:
+                                    continue
+                    except:
+                        pass
+            
+            return {
+                "status": "live",
+                "count": len(cctvs),
+                "search_area": {
+                    "center": {"lat": lat, "lng": lng},
+                    "radius": radius,
+                    "bounds": {"minX": min_x, "maxX": max_x, "minY": min_y, "maxY": max_y}
+                },
+                "data": cctvs
+            }
+            
+    except httpx.TimeoutException:
+        return {"status": "error", "message": "ITS API 타임아웃", "count": 0, "data": []}
+    except Exception as e:
+        return {"status": "error", "message": f"CCTV 조회 오류: {str(e)}", "count": 0, "data": []}
 
 # ============================================
 #  도로안전시설 점검
@@ -236,7 +362,7 @@ if __name__ == "__main__":
     import uvicorn
     k = ANTHROPIC_API_KEY != "여기에_API_키_입력"
     print("\n" + "="*55)
-    print("  🛣️  기능성 포장 플랫폼 v1.1 — 공공 API 통합")
+    print("  🛣️  기능성 포장 플랫폼 v1.2 — 공공 API 통합")
     print("="*55)
     print(f"\n  📡 Claude AI  : {'✅' if k else '❌'}")
     print(f"  🗺️  VWorld     : {'✅' if VWORLD_API_KEY else '❌'}")
