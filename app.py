@@ -174,20 +174,19 @@ async def get_realtime_traffic(start_idx: int = 1, end_idx: int = 100):
 async def get_cctv(lat: float = 37.55, lng: float = 126.98, radius: float = 0.2):
     if ITS_CCTV_KEY:
         try:
-            import ssl
-            ssl_context = ssl.create_default_context()
-            ssl_context.check_hostname = False
-            ssl_context.verify_mode = ssl.CERT_NONE
-            async with httpx.AsyncClient(timeout=30.0, verify=ssl_context) as c:
+            async with httpx.AsyncClient(timeout=60.0, verify=False) as c:
                 r = await c.get("https://openapi.its.go.kr:9443/cctvInfo",
                     params={"apiKey":ITS_CCTV_KEY,"type":"ex","cctvType":"1","minX":str(lng-radius),"maxX":str(lng+radius),"minY":str(lat-radius),"maxY":str(lat+radius),"getType":"json"})
                 data = r.json(); cctvs = []
                 if "response" in data and "data" in data["response"]:
                     for item in data["response"]["data"]:
                         cctvs.append({"name":item.get("cctvname",""),"lat":float(item.get("coordy",0)),"lng":float(item.get("coordx",0)),"url":item.get("cctvurl",""),"format":item.get("cctvformat","")})
-                return {"status":"live","count":len(cctvs),"data":cctvs}
+                    return {"status":"live","count":len(cctvs),"data":cctvs}
+                return {"status":"live","count":0,"data":[],"raw":data}
+        except httpx.TimeoutException:
+            pass
         except Exception as e:
-            return {"status":"error","message":str(e),"key_exists":True}
+            return {"status":"error","message":str(e),"key":ITS_CCTV_KEY[:8]+"..."}
     samples = [{"name":"남산1터널 입구","lat":37.553,"lng":126.985,"url":"","format":"image"},{"name":"강남역 교차로","lat":37.498,"lng":127.028,"url":"","format":"image"},
         {"name":"올림픽대로 잠실대교","lat":37.519,"lng":127.078,"url":"","format":"image"},{"name":"북악터널 입구","lat":37.591,"lng":126.968,"url":"","format":"image"},
         {"name":"신림사거리","lat":37.485,"lng":126.930,"url":"","format":"image"},{"name":"인왕산터널","lat":37.580,"lng":126.959,"url":"","format":"image"},
