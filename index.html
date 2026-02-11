@@ -96,6 +96,7 @@ body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#0a0a0f;col
         <div class="lt on" style="--c:#ef4444;--bg:rgba(239,68,68,.06);" data-t="drain" onclick="tog(this)"><div class="dot" style="background:#ef4444;"></div><div class="nm">🛣️ 배수성 (경사+폭우+사고)</div><div class="ct">9</div></div>
         <div class="lt on" style="--c:#a855f7;--bg:rgba(168,85,247,.06);" data-t="quiet" onclick="tog(this)"><div class="dot" style="background:#a855f7;"></div><div class="nm">🔇 저소음 (주거+교통량)</div><div class="ct">8</div></div>
         <div class="lt on" style="--c:#06b6d4;--bg:rgba(6,182,212,.06);" data-t="perm" onclick="tog(this)"><div class="dot" style="background:#06b6d4;"></div><div class="nm">💧 투수성 (침수+불투수면)</div><div class="ct">6</div></div>
+        <div class="lt on" style="--c:#3b82f6;--bg:rgba(59,130,246,.06);" data-t="flood" onclick="togFlood(this)"><div class="dot" style="background:#3b82f6;"></div><div class="nm">💧 침수취약지역</div><div class="ct" id="floodCnt">0</div></div>
         <div class="lt on" style="--c:#facc15;--bg:rgba(250,204,21,.06);" data-t="cctv" onclick="togCCTV(this)"><div class="dot" style="background:#facc15;"></div><div class="nm">📹 ITS CCTV 영상</div><div class="ct" id="cctvCnt">0</div></div>
         <div class="lt on" style="--c:#fb923c;--bg:rgba(251,146,60,.06);" data-t="safety" onclick="togSafety(this)"><div class="dot" style="background:#fb923c;"></div><div class="nm">🔧 도로안전시설 점검</div><div class="ct" id="safetyCnt">0</div></div>
     </div>
@@ -111,6 +112,17 @@ body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#0a0a0f;col
     <div class="sec">
         <div class="stt">🚦 실시간 교통 소통</div>
         <div id="trafficPanel"><div style="color:#666;font-size:9px;padding:4px;">로딩 중...</div></div>
+    </div>
+    <div class="sec">
+        <div class="stt">🌊 침수 사전 경보</div>
+        <div id="floodWarningPanel" style="padding:6px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:6px;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                <div id="floodStatus" style="width:10px;height:10px;border-radius:50%;background:#22c55e;"></div>
+                <div id="floodStatusText" style="font-size:11px;font-weight:700;color:#22c55e;">전 구간 정상</div>
+            </div>
+            <div style="font-size:9px;color:#888;margin-bottom:4px;">현재 강우량: <span id="currentRain">0</span>mm/h</div>
+            <div id="floodAlerts" style="max-height:80px;overflow-y:auto;font-size:9px;"></div>
+        </div>
     </div>
     <div class="sec">
         <div class="stt">📡 API 연동 상태</div>
@@ -221,12 +233,12 @@ function checkStatus(){
         AI_MODE=d.claude_ai==='connected'?'live':'offline';
         var b=document.getElementById('aiBadge');
         if(AI_MODE==='live'){b.className='badge b-g';b.textContent='AI 실시간';}else{b.className='badge b-y';b.textContent='AI 오프라인';}
-        loadVWorldTiles();loadCCTV();loadSafety();loadWeather();loadTraffic();
+        loadVWorldTiles();loadCCTV();loadSafety();loadWeather();loadTraffic();loadFloodAreas();
     }).catch(function(){
         AI_MODE='offline';setDot('ai','off');setDot('vw','off');setDot('wx','off');setDot('ta','off');setDot('tp','off');setDot('cc','off');
         var b=document.getElementById('aiBadge');b.className='badge b-y';b.textContent='AI 오프라인';
         var mb=document.getElementById('mapBadge');mb.className='badge b-y';mb.textContent='OSM 폴백';
-        loadCCTV();loadSafety();
+        loadCCTV();loadSafety();loadFloodAreas();
     });
 }
 function setDot(id,st){
@@ -420,6 +432,45 @@ function loadCCTVSample(){
 }
 function togCCTV(el){cctvVisible=!cctvVisible;el.classList.toggle('on',cctvVisible);el.querySelector('.dot').style.background=cctvVisible?'#facc15':'#333';if(cctvVisible)map.addLayer(cctvLayer);else map.removeLayer(cctvLayer);}
 
+// ===== 침수취약지역 =====
+var floodLayer=L.layerGroup().addTo(map),floodVisible=true;
+function loadFloodAreas(){
+    // 서울시 주요 침수취약지역 (침수흔적도 기반)
+    var floodAreas=[
+        {name:'신림역 지하차도',lat:37.4842,lng:126.9293,risk:'고위험',history:'2022년 침수',depth:'1.5m'},
+        {name:'강남역 일대',lat:37.4979,lng:127.0276,risk:'고위험',history:'2022년 침수',depth:'1.2m'},
+        {name:'대림동 저지대',lat:37.4927,lng:126.8985,risk:'고위험',history:'2020년 침수',depth:'0.8m'},
+        {name:'구로디지털단지역',lat:37.4854,lng:126.9015,risk:'중위험',history:'2018년 침수',depth:'0.5m'},
+        {name:'사당역 지하차도',lat:37.4765,lng:126.9816,risk:'고위험',history:'2022년 침수',depth:'1.0m'},
+        {name:'도림천 주변(신도림)',lat:37.5089,lng:126.8912,risk:'중위험',history:'2020년 침수',depth:'0.6m'},
+        {name:'중랑천 주변(장안동)',lat:37.5705,lng:127.0661,risk:'중위험',history:'2011년 침수',depth:'0.7m'},
+        {name:'안양천 주변(신정동)',lat:37.5178,lng:126.8567,risk:'중위험',history:'2011년 침수',depth:'0.5m'},
+        {name:'광진구 자양동',lat:37.5355,lng:127.0712,risk:'중위험',history:'2020년 침수',depth:'0.4m'},
+        {name:'동작구 사당동',lat:37.4833,lng:126.9795,risk:'중위험',history:'2022년 침수',depth:'0.6m'},
+        {name:'관악구 봉천동',lat:37.4780,lng:126.9516,risk:'고위험',history:'2022년 침수',depth:'0.9m'},
+        {name:'송파구 잠실동',lat:37.5145,lng:127.1005,risk:'저위험',history:'2011년 침수',depth:'0.3m'},
+        {name:'영등포 지하상가',lat:37.5159,lng:126.9074,risk:'고위험',history:'2022년 침수',depth:'1.1m'},
+        {name:'마포구 상암동',lat:37.5786,lng:126.8892,risk:'저위험',history:'2011년 침수',depth:'0.3m'},
+        {name:'은평구 불광동',lat:37.6106,lng:126.9296,risk:'중위험',history:'2011년 침수',depth:'0.5m'}
+    ];
+    document.getElementById('floodCnt').textContent=floodAreas.length;
+    var riskColors={'고위험':'#ef4444','중위험':'#f59e0b','저위험':'#22c55e'};
+    floodAreas.forEach(function(f){
+        var color=riskColors[f.risk]||'#3b82f6';
+        var ic=L.divIcon({className:'',html:'<div style="width:16px;height:16px;background:'+color+';border:2px solid #fff;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font-size:9px;">💧</div>',iconSize:[16,16],iconAnchor:[8,8]});
+        var popup='<div style="font-size:13px;font-weight:900;color:'+color+';margin-bottom:6px;">💧 '+f.name+'</div>'+
+            '<div style="font-size:10px;margin-bottom:8px;color:#888;">'+f.lat.toFixed(4)+', '+f.lng.toFixed(4)+'</div>'+
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:10px;">'+
+            '<div style="padding:4px 6px;background:rgba(255,255,255,.05);border-radius:4px;"><span style="color:#888;">위험등급</span><div style="font-weight:700;color:'+color+';">'+f.risk+'</div></div>'+
+            '<div style="padding:4px 6px;background:rgba(255,255,255,.05);border-radius:4px;"><span style="color:#888;">침수심</span><div style="font-weight:700;color:#3b82f6;">'+f.depth+'</div></div>'+
+            '</div>'+
+            '<div style="margin-top:6px;padding:6px;background:rgba(59,130,246,.1);border-radius:4px;font-size:9px;color:#3b82f6;">📅 '+f.history+'</div>'+
+            '<div style="margin-top:8px;padding:6px;background:rgba(240,180,41,.1);border-radius:4px;font-size:9px;color:#f0b429;">💡 배수성 포장 우선 적용 권장</div>';
+        floodLayer.addLayer(L.marker([f.lat,f.lng],{icon:ic}).bindPopup(popup,{maxWidth:240}));
+    });
+}
+function togFlood(el){floodVisible=!floodVisible;el.classList.toggle('on',floodVisible);el.querySelector('.dot').style.background=floodVisible?'#3b82f6':'#333';if(floodVisible)map.addLayer(floodLayer);else map.removeLayer(floodLayer);}
+
 // ===== 안전시설 =====
 var safetyLayer=L.layerGroup().addTo(map),safetyVisible=true;
 var SC={'양호':'#22c55e','주의':'#f59e0b','교체필요':'#ef4444'};
@@ -435,6 +486,72 @@ function loadSafety(){
     }).catch(function(){document.getElementById('safetyCnt').textContent='–';});
 }
 function togSafety(el){safetyVisible=!safetyVisible;el.classList.toggle('on',safetyVisible);el.querySelector('.dot').style.background=safetyVisible?'#fb923c':'#333';if(safetyVisible)map.addLayer(safetyLayer);else map.removeLayer(safetyLayer);}
+
+// ===== 침수 사전 경보 시스템 =====
+function loadFloodWarning(){
+    fetch(API_BASE+'/api/flood/warning').then(function(r){return r.json();}).then(function(d){
+        if(d.status!=='success')return;
+        
+        // 강우량 표시
+        document.getElementById('currentRain').textContent=d.current_rain_mm||0;
+        
+        // 상태 표시
+        var statusEl=document.getElementById('floodStatus');
+        var statusTextEl=document.getElementById('floodStatusText');
+        var colors={'위험':'#ef4444','경고':'#f59e0b','주의':'#facc15','정상':'#22c55e'};
+        var statusColor=colors[d.overall_status]||'#22c55e';
+        statusEl.style.background=statusColor;
+        statusTextEl.style.color=statusColor;
+        statusTextEl.textContent=d.message||'전 구간 정상';
+        
+        // 경보 구간 표시
+        var alertsEl=document.getElementById('floodAlerts');
+        var alertHtml='';
+        d.warnings.filter(function(w){return w.level!=='✅ 정상';}).slice(0,5).forEach(function(w){
+            var wColor=w.level.includes('위험')?'#ef4444':w.level.includes('경고')?'#f59e0b':'#facc15';
+            alertHtml+='<div style="padding:4px;margin-bottom:3px;background:rgba(255,255,255,.03);border-left:2px solid '+wColor+';border-radius:2px;">'+
+                '<div style="font-weight:700;color:'+wColor+';">'+w.level+' '+w.zone_name+'</div>'+
+                '<div style="color:#888;font-size:8px;">'+w.message+'</div></div>';
+        });
+        if(!alertHtml)alertHtml='<div style="color:#22c55e;font-size:9px;padding:4px;">✅ 모든 침수 취약구간 정상</div>';
+        alertsEl.innerHTML=alertHtml;
+        
+        // 위험/경고 시 알림
+        if(d.overall_status==='위험'){
+            showFloodAlert('🚨 침수 위험 경보!', d.message, '#ef4444');
+        }else if(d.overall_status==='경고'){
+            showFloodAlert('⚠️ 침수 경고', d.message, '#f59e0b');
+        }
+    }).catch(function(e){
+        console.error('Flood warning error:', e);
+        document.getElementById('floodStatusText').textContent='연결 대기 중...';
+    });
+}
+
+function showFloodAlert(title, message, color){
+    // 이미 알림이 있으면 제거
+    var existing=document.getElementById('floodAlertPopup');
+    if(existing)existing.remove();
+    
+    var popup=document.createElement('div');
+    popup.id='floodAlertPopup';
+    popup.style.cssText='position:fixed;top:80px;right:20px;width:300px;padding:16px;background:rgba(15,15,25,.95);border:2px solid '+color+';border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.5);z-index:9999;animation:slideIn .3s ease;';
+    popup.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="font-size:18px;">🌊</div><div style="font-size:14px;font-weight:900;color:'+color+';">'+title+'</div><div style="margin-left:auto;cursor:pointer;font-size:16px;color:#888;" onclick="this.parentElement.parentElement.remove()">✕</div></div>'+
+        '<div style="font-size:11px;color:#ccc;line-height:1.5;">'+message+'</div>'+
+        '<div style="margin-top:10px;display:flex;gap:8px;">'+
+        '<button onclick="map.setView([37.4842,126.9293],14);this.parentElement.parentElement.remove();" style="flex:1;padding:8px;background:'+color+';border:none;border-radius:6px;color:#fff;font-size:10px;font-weight:700;cursor:pointer;">📍 위험구간 보기</button>'+
+        '<button onclick="this.parentElement.parentElement.remove();" style="padding:8px 12px;background:rgba(255,255,255,.1);border:none;border-radius:6px;color:#888;font-size:10px;cursor:pointer;">닫기</button></div>';
+    document.body.appendChild(popup);
+    
+    // 10초 후 자동 닫기
+    setTimeout(function(){if(popup.parentElement)popup.remove();},10000);
+}
+
+// 침수 경보 자동 갱신 (60초마다)
+setInterval(loadFloodWarning, 60000);
+
+// 초기 로드
+loadFloodWarning();
 </script>
 </body>
 </html>
