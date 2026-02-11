@@ -173,13 +173,21 @@ async def get_realtime_traffic(start_idx: int = 1, end_idx: int = 100):
 @app.get("/api/cctv-image")
 async def get_cctv_image(url: str):
     """CCTV 이미지 프록시 - CORS 우회"""
+    import urllib.parse
     try:
-        async with httpx.AsyncClient(timeout=10.0, verify=False) as c:
-            r = await c.get(url, headers={"User-Agent": "Mozilla/5.0", "Referer": "http://www.its.go.kr/"})
+        # URL 디코딩 (이중 인코딩 방지)
+        decoded_url = urllib.parse.unquote(url)
+        async with httpx.AsyncClient(timeout=15.0, verify=False, follow_redirects=True) as c:
+            r = await c.get(decoded_url, headers={
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                "Referer": "http://www.its.go.kr/",
+                "Accept": "image/webp,image/apng,image/*,*/*;q=0.8"
+            })
             if r.status_code == 200:
                 from fastapi.responses import Response
-                return Response(content=r.content, media_type=r.headers.get("content-type", "image/jpeg"))
-            return JSONResponse(status_code=r.status_code, content={"error": "Failed to fetch image"})
+                content_type = r.headers.get("content-type", "image/jpeg")
+                return Response(content=r.content, media_type=content_type)
+            return JSONResponse(status_code=r.status_code, content={"error": f"Status {r.status_code}", "url": decoded_url[:100]})
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
 
