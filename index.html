@@ -372,20 +372,50 @@ function closeAI(){document.getElementById('aiP').classList.remove('show');}
 
 // ===== CCTV =====
 var cctvLayer=L.layerGroup().addTo(map),cctvVisible=true;
+var ITS_CCTV_KEY='5fa7b53b001d4b34b733fd9129ceb7a6';
 function loadCCTV(){
-    fetch(API_BASE+'/api/cctv?lat=37.5665&lng=126.978&radius=0.2').then(function(r){return r.json();}).then(function(d){
-        console.log('CCTV data:', d);
-        var items=d.data||[];
-        document.getElementById('cctvCnt').textContent=items.length;
+    // 프론트엔드에서 직접 ITS API 호출
+    var url='https://openapi.its.go.kr:9443/cctvInfo?apiKey='+ITS_CCTV_KEY+'&type=ex&cctvType=1&minX=126.8&maxX=127.2&minY=37.4&maxY=37.7&getType=json';
+    fetch(url).then(function(r){return r.json();}).then(function(d){
+        console.log('ITS CCTV data:', d);
         cctvLayer.clearLayers();
-        items.forEach(function(c){
-            if(!c.lat||!c.lng||c.lat===0||c.lng===0)return;
-            var ic=L.divIcon({className:'',html:'<div style="width:14px;height:14px;background:#facc15;border:2px solid #fff;border-radius:3px;box-shadow:0 2px 6px rgba(0,0,0,.5);font-size:8px;display:flex;align-items:center;justify-content:center;">📹</div>',iconSize:[14,14],iconAnchor:[7,7]});
-            var popup='<div style="font-size:12px;font-weight:900;color:#facc15;margin-bottom:4px;">📹 '+c.name+'</div><div style="font-size:9px;color:#888;">'+Number(c.lat).toFixed(4)+', '+Number(c.lng).toFixed(4)+'</div>';
-            cctvLayer.addLayer(L.marker([Number(c.lat),Number(c.lng)],{icon:ic}).bindPopup(popup,{maxWidth:200}));
-        });
-        console.log('CCTV markers added:', cctvLayer.getLayers().length);
-    }).catch(function(e){console.error('CCTV error:',e);document.getElementById('cctvCnt').textContent='–';});
+        if(d.response && d.response.data && d.response.data.length>0){
+            var items=d.response.data.slice(0,30); // 최대 30개
+            document.getElementById('cctvCnt').textContent=items.length;
+            items.forEach(function(c){
+                var lat=parseFloat(c.coordy),lng=parseFloat(c.coordx);
+                if(!lat||!lng)return;
+                var ic=L.divIcon({className:'',html:'<div style="width:14px;height:14px;background:#facc15;border:2px solid #fff;border-radius:3px;box-shadow:0 2px 6px rgba(0,0,0,.5);font-size:8px;display:flex;align-items:center;justify-content:center;">📹</div>',iconSize:[14,14],iconAnchor:[7,7]});
+                var videoHtml='';
+                if(c.cctvurl){
+                    videoHtml='<div style="margin-top:8px;"><img src="'+c.cctvurl+'" style="width:100%;max-width:280px;border-radius:6px;border:1px solid #333;" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'block\'"/><div style="display:none;font-size:9px;color:#f59e0b;padding:8px;background:rgba(245,158,11,.1);border-radius:4px;">⚠️ 영상 로드 실패 (CORS 제한)</div></div>';
+                }
+                var popup='<div style="font-size:12px;font-weight:900;color:#facc15;margin-bottom:4px;">📹 '+(c.cctvname||'CCTV')+'</div><div style="font-size:9px;color:#888;">'+lat.toFixed(4)+', '+lng.toFixed(4)+'</div>'+videoHtml;
+                cctvLayer.addLayer(L.marker([lat,lng],{icon:ic}).bindPopup(popup,{maxWidth:320,minWidth:200}));
+            });
+            console.log('CCTV markers added:', items.length);
+        }else{
+            loadCCTVSample();
+        }
+    }).catch(function(e){
+        console.error('ITS API error:',e);
+        loadCCTVSample();
+    });
+}
+function loadCCTVSample(){
+    var samples=[
+        {name:'남산1터널 입구',lat:37.553,lng:126.985},{name:'강남역 교차로',lat:37.498,lng:127.028},
+        {name:'올림픽대로 잠실대교',lat:37.519,lng:127.078},{name:'북악터널 입구',lat:37.591,lng:126.968},
+        {name:'신림사거리',lat:37.485,lng:126.93},{name:'인왕산터널',lat:37.58,lng:126.959},
+        {name:'내부순환 정릉입구',lat:37.604,lng:127.01},{name:'동작대교 남단',lat:37.506,lng:126.983},
+        {name:'한남IC',lat:37.535,lng:127.002},{name:'사당역',lat:37.478,lng:126.983}
+    ];
+    document.getElementById('cctvCnt').textContent=samples.length;
+    samples.forEach(function(c){
+        var ic=L.divIcon({className:'',html:'<div style="width:14px;height:14px;background:#facc15;border:2px solid #fff;border-radius:3px;box-shadow:0 2px 6px rgba(0,0,0,.5);font-size:8px;display:flex;align-items:center;justify-content:center;">📹</div>',iconSize:[14,14],iconAnchor:[7,7]});
+        var popup='<div style="font-size:12px;font-weight:900;color:#facc15;margin-bottom:4px;">📹 '+c.name+'</div><div style="font-size:9px;color:#888;">'+c.lat.toFixed(4)+', '+c.lng.toFixed(4)+'</div><div style="font-size:9px;color:#666;margin-top:4px;">샘플 데이터</div>';
+        cctvLayer.addLayer(L.marker([c.lat,c.lng],{icon:ic}).bindPopup(popup,{maxWidth:200}));
+    });
 }
 function togCCTV(el){cctvVisible=!cctvVisible;el.classList.toggle('on',cctvVisible);el.querySelector('.dot').style.background=cctvVisible?'#facc15':'#333';if(cctvVisible)map.addLayer(cctvLayer);else map.removeLayer(cctvLayer);}
 
