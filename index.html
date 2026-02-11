@@ -96,6 +96,7 @@ body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#0a0a0f;col
         <div class="lt on" style="--c:#ef4444;--bg:rgba(239,68,68,.06);" data-t="drain" onclick="tog(this)"><div class="dot" style="background:#ef4444;"></div><div class="nm">🛣️ 배수성 (경사+폭우+사고)</div><div class="ct">9</div></div>
         <div class="lt on" style="--c:#a855f7;--bg:rgba(168,85,247,.06);" data-t="quiet" onclick="tog(this)"><div class="dot" style="background:#a855f7;"></div><div class="nm">🔇 저소음 (주거+교통량)</div><div class="ct">8</div></div>
         <div class="lt on" style="--c:#06b6d4;--bg:rgba(6,182,212,.06);" data-t="perm" onclick="tog(this)"><div class="dot" style="background:#06b6d4;"></div><div class="nm">💧 투수성 (침수+불투수면)</div><div class="ct">6</div></div>
+        <div class="lt on" style="--c:#0ea5e9;--bg:rgba(14,165,233,.06);" data-t="basin" onclick="togBasin(this)"><div class="dot" style="background:#0ea5e9;"></div><div class="nm">🏔️ 지형 웅덩이 (등고선)</div><div class="ct" id="basinCnt">0</div></div>
         <div class="lt on" style="--c:#3b82f6;--bg:rgba(59,130,246,.06);" data-t="flood" onclick="togFlood(this)"><div class="dot" style="background:#3b82f6;"></div><div class="nm">💧 침수취약지역</div><div class="ct" id="floodCnt">0</div></div>
         <div class="lt on" style="--c:#facc15;--bg:rgba(250,204,21,.06);" data-t="cctv" onclick="togCCTV(this)"><div class="dot" style="background:#facc15;"></div><div class="nm">📹 ITS CCTV 영상</div><div class="ct" id="cctvCnt">0</div></div>
         <div class="lt on" style="--c:#fb923c;--bg:rgba(251,146,60,.06);" data-t="safety" onclick="togSafety(this)"><div class="dot" style="background:#fb923c;"></div><div class="nm">🔧 도로안전시설 점검</div><div class="ct" id="safetyCnt">0</div></div>
@@ -270,28 +271,30 @@ function loadWeather(){
 
 // ===== 실시간 교통 =====
 function loadTraffic(){
-    fetch(API_BASE+'/api/traffic/realtime?start_idx=1&end_idx=20').then(function(r){return r.json();}).then(function(d){
+    fetch(API_BASE+'/api/traffic/realtime').then(function(r){return r.json();}).then(function(d){
         var tp=document.getElementById('trafficPanel');
         var items=d.data||[];
         if(items.length===0){tp.innerHTML='<div style="color:#666;font-size:9px;padding:4px;">데이터 없음</div>';return;}
         var h='';
-        // 23개 구간 관련 도로만 필터
-        var roads=['남산','올림픽','강남','내부순환','강변','동작','한남','사당','서부간선','북부간선'];
         var shown=0;
         items.forEach(function(t){
-            if(shown>=8)return;
-            var match=roads.some(function(r){return t.road_name&&t.road_name.indexOf(r)!==-1;});
-            if(!match&&shown>=5)return;
+            if(shown>=6)return;
             var spd=parseFloat(t.speed)||0;
             var col=spd>=40?'#22c55e':spd>=20?'#f59e0b':'#ef4444';
-            var st=spd>=40?'원활':spd>=20?'서행':'정체';
+            var st=t.status||'';
             h+='<div class="tf-item"><span class="tf-name">'+t.road_name+'</span>';
             h+='<div class="tf-bar"><div class="tf-bar-in" style="width:'+Math.min(100,spd*1.5)+'%;background:'+col+';"></div></div>';
-            h+='<span class="tf-speed" style="color:'+col+'">'+spd+'km</span></div>';
+            h+='<span class="tf-speed" style="color:'+col+'">'+Math.round(spd)+'km</span></div>';
             shown++;
         });
         if(!h)h='<div style="color:#666;font-size:9px;padding:4px;">관련 도로 데이터 없음</div>';
         tp.innerHTML=h;
+        // 상태 표시 업데이트
+        if(d.status==='live'){
+            document.getElementById('d-tp').style.background='#22c55e';
+            document.getElementById('s-tp').textContent='실시간';
+            document.getElementById('s-tp').style.color='#22c55e';
+        }
     }).catch(function(){
         document.getElementById('trafficPanel').innerHTML='<div style="color:#666;font-size:9px;padding:4px;">연결 대기 중...</div>';
     });
@@ -552,6 +555,112 @@ setInterval(loadFloodWarning, 60000);
 
 // 초기 로드
 loadFloodWarning();
+
+// ===== 지형 웅덩이 레이어 (등고선 스타일) =====
+var basinLayer=L.layerGroup().addTo(map),basinVisible=true;
+function loadBasinAreas(){
+    // 서울 지형 웅덩이 (저지대) 데이터 - 고도 및 유역 기반
+    var basins=[
+        // 도림천 유역 (가장 낮은 지대)
+        {name:'도림천 유역',center:[37.4912,126.9089],elevation:15,radius:1200,
+         contours:[[37.4912,126.9089,800],[37.4927,126.8985,600],[37.4850,126.9150,500]],
+         desc:'서울 최저지대, 2022년 집중호우 시 대규모 침수'},
+        // 안양천 유역
+        {name:'안양천 유역',center:[37.5178,126.8567],elevation:18,radius:1000,
+         contours:[[37.5178,126.8567,700],[37.5089,126.8650,500]],
+         desc:'안양천 합류부, 상습 침수구역'},
+        // 중랑천 유역
+        {name:'중랑천 유역',center:[37.5705,127.0661],elevation:20,radius:900,
+         contours:[[37.5705,127.0661,600],[37.5650,127.0550,450]],
+         desc:'중랑천변 저지대'},
+        // 강남역 일대 (지하수 집수)
+        {name:'강남역 분지',center:[37.4979,127.0276],elevation:22,radius:700,
+         contours:[[37.4979,127.0276,500],[37.5010,127.0230,350]],
+         desc:'지형적 오목부, 빗물 집수 지역'},
+        // 신림역 일대
+        {name:'신림 저지대',center:[37.4842,126.9293],elevation:16,radius:800,
+         contours:[[37.4842,126.9293,600],[37.4800,126.9350,400]],
+         desc:'도림천 상류, 지하차도 침수 위험'},
+        // 대림동 저지대
+        {name:'대림동 저지대',center:[37.4925,126.8958],elevation:17,radius:600,
+         contours:[[37.4925,126.8958,450],[37.4880,126.9000,300]],
+         desc:'구로-영등포 경계 저지대'},
+        // 여의도
+        {name:'여의도 저지대',center:[37.5219,126.9245],elevation:12,radius:1100,
+         contours:[[37.5219,126.9245,800],[37.5280,126.9180,600]],
+         desc:'한강변 최저지대, 제방 의존'},
+        // 잠원동
+        {name:'잠원 한강변',center:[37.5186,127.0052],elevation:14,radius:650,
+         contours:[[37.5186,127.0052,500],[37.5150,127.0100,350]],
+         desc:'반포대교 인근 저지대'},
+        // 반포동
+        {name:'반포IC 저지대',center:[37.5053,127.0108],elevation:19,radius:500,
+         contours:[[37.5053,127.0108,400],[37.5020,127.0150,280]],
+         desc:'지하차도 침수 취약'},
+        // 사당동
+        {name:'사당역 분지',center:[37.4765,126.9816],elevation:25,radius:550,
+         contours:[[37.4765,126.9816,420],[37.4730,126.9850,300]],
+         desc:'남태령 계곡부 집수지역'}
+    ];
+    
+    document.getElementById('basinCnt').textContent=basins.length;
+    
+    // 등고선 색상 (고도별)
+    var elevColors={
+        12:'#0c4a6e',13:'#075985',14:'#0369a1',15:'#0284c7',
+        16:'#0ea5e9',17:'#38bdf8',18:'#7dd3fc',19:'#bae6fd',
+        20:'#e0f2fe',22:'#f0f9ff',25:'#f8fafc'
+    };
+    
+    basins.forEach(function(b){
+        // 등고선 원 (여러 겹)
+        b.contours.forEach(function(c,i){
+            var opacity=0.15-i*0.03;
+            var weight=2-i*0.5;
+            L.circle([c[0],c[1]],{
+                radius:c[2],
+                color:'#0ea5e9',
+                fillColor:'#0ea5e9',
+                fillOpacity:opacity,
+                weight:weight,
+                opacity:0.4,
+                dashArray:i>0?'5,5':null
+            }).addTo(basinLayer);
+        });
+        
+        // 중심 마커
+        var elCol=elevColors[b.elevation]||'#0ea5e9';
+        var ic=L.divIcon({
+            className:'',
+            html:'<div style="width:28px;height:28px;background:linear-gradient(135deg,'+elCol+',#0c4a6e);border:2px solid #fff;border-radius:50%;box-shadow:0 2px 8px rgba(14,165,233,.5);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;">'+b.elevation+'m</div>',
+            iconSize:[28,28],
+            iconAnchor:[14,14]
+        });
+        
+        var popup='<div style="font-size:14px;font-weight:900;color:#0ea5e9;margin-bottom:8px;">🏔️ '+b.name+'</div>'+
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;">'+
+            '<div style="padding:6px;background:rgba(14,165,233,.1);border-radius:4px;text-align:center;"><div style="font-size:8px;color:#888;">해발고도</div><div style="font-size:14px;font-weight:700;color:#0ea5e9;">'+b.elevation+'m</div></div>'+
+            '<div style="padding:6px;background:rgba(14,165,233,.1);border-radius:4px;text-align:center;"><div style="font-size:8px;color:#888;">영향반경</div><div style="font-size:14px;font-weight:700;color:#0ea5e9;">'+b.radius+'m</div></div>'+
+            '</div>'+
+            '<div style="padding:8px;background:rgba(14,165,233,.08);border-radius:6px;border-left:3px solid #0ea5e9;">'+
+            '<div style="font-size:9px;color:#0ea5e9;font-weight:600;margin-bottom:2px;">💧 침수 특성</div>'+
+            '<div style="font-size:10px;color:#ccc;line-height:1.4;">'+b.desc+'</div>'+
+            '</div>'+
+            '<div style="margin-top:8px;padding:6px;background:rgba(239,68,68,.1);border-radius:4px;font-size:9px;color:#ef4444;">'+
+            '⚠️ 시간당 30mm 이상 강우 시 침수 위험'+
+            '</div>';
+        
+        basinLayer.addLayer(L.marker(b.center,{icon:ic}).bindPopup(popup,{maxWidth:260}));
+    });
+}
+function togBasin(el){
+    basinVisible=!basinVisible;
+    el.classList.toggle('on',basinVisible);
+    el.querySelector('.dot').style.background=basinVisible?'#0ea5e9':'#333';
+    if(basinVisible)map.addLayer(basinLayer);
+    else map.removeLayer(basinLayer);
+}
+loadBasinAreas();
 </script>
 </body>
 </html>
