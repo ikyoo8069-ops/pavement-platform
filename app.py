@@ -168,6 +168,106 @@ async def get_realtime_traffic(start_idx: int = 1, end_idx: int = 100):
         {"road_name":"강남대로","speed":18,"status":"정체"},{"road_name":"내부순환로","speed":42,"status":"서행"},{"road_name":"강변북로","speed":65,"status":"원활"}]}
 
 # ============================================
+#  침수 사전 경보 시스템
+# ============================================
+# 서울시 침수 선행 지표 구간 (과거 침수흔적도 기반 - 가장 먼저 침수되는 구간)
+FLOOD_INDICATOR_ZONES = [
+    {"id": "FZ001", "name": "신림역 지하차도", "lat": 37.4842, "lng": 126.9293, "priority": 1, "threshold_rain": 30, "history": "2022년, 2020년, 2011년 침수"},
+    {"id": "FZ002", "name": "강남역 사거리", "lat": 37.4979, "lng": 127.0276, "priority": 1, "threshold_rain": 35, "history": "2022년, 2011년 침수"},
+    {"id": "FZ003", "name": "대림역 일대", "lat": 37.4925, "lng": 126.8958, "priority": 1, "threshold_rain": 30, "history": "2020년, 2011년 침수"},
+    {"id": "FZ004", "name": "사당역 지하차도", "lat": 37.4765, "lng": 126.9816, "priority": 2, "threshold_rain": 40, "history": "2011년 침수"},
+    {"id": "FZ005", "name": "도림천 광신대교", "lat": 37.4912, "lng": 126.9089, "priority": 1, "threshold_rain": 25, "history": "2022년, 2020년 침수"},
+    {"id": "FZ006", "name": "구로디지털단지역", "lat": 37.4854, "lng": 126.9015, "priority": 2, "threshold_rain": 35, "history": "2020년 침수"},
+    {"id": "FZ007", "name": "잠원IC 진입로", "lat": 37.5186, "lng": 127.0052, "priority": 2, "threshold_rain": 40, "history": "2022년 침수"},
+    {"id": "FZ008", "name": "반포IC 지하차도", "lat": 37.5053, "lng": 127.0108, "priority": 1, "threshold_rain": 30, "history": "2022년, 2011년 침수"},
+]
+
+@app.get("/api/flood/zones")
+async def get_flood_zones():
+    """침수 선행 지표 구간 목록"""
+    return {"status": "success", "count": len(FLOOD_INDICATOR_ZONES), "zones": FLOOD_INDICATOR_ZONES}
+
+@app.get("/api/flood/warning")
+async def get_flood_warning():
+    """침수 사전 경보 - 실시간 강우량 기반"""
+    warnings = []
+    current_rain = 0
+    rain_status = "정상"
+    
+    # 실시간 강우량 확인 (ASOS)
+    if DATA_GO_KR_KEY:
+        try:
+            today = datetime.now().strftime("%Y%m%d")
+            async with httpx.AsyncClient(timeout=10.0) as c:
+                r = await c.get(f"http://apis.data.go.kr/1360000/AsosHourlyInfoService/getWthrDataList",
+                    params={"serviceKey": DATA_GO_KR_KEY, "numOfRows": "1", "dataType": "JSON",
+                            "dataCd": "ASOS", "dateCd": "HR", "startDt": today, "startHh": "00",
+                            "endDt": today, "endHh": "23", "stnIds": "108"})
+                data = r.json()
+                items = data.get("response", {}).get("body", {}).get("items", {}).get("item", [])
+                if items:
+                    last_item = items[-1] if isinstance(items, list) else items
+                    rain_str = last_item.get("rn", "0")
+                    current_rain = float(rain_str) if rain_str and rain_str != "" else 0
+        except:
+            pass
+    
+    # 경보 레벨 결정
+    for zone in FLOOD_INDICATOR_ZONES:
+        zone_warning = {
+            "zone_id": zone["id"],
+            "zone_name": zone["name"],
+            "lat": zone["lat"],
+            "lng": zone["lng"],
+            "priority": zone["priority"],
+            "threshold": zone["threshold_rain"],
+            "current_rain": current_rain,
+            "history": zone["history"],
+            "level": "정상",
+            "message": ""
+        }
+        
+        if current_rain >= zone["threshold_rain"]:
+            zone_warning["level"] = "🚨 위험"
+            zone_warning["message"] = f"침수 임박! 즉시 우회 필요"
+            rain_status = "위험"
+        elif current_rain >= zone["threshold_rain"] * 0.7:
+            zone_warning["level"] = "⚠️ 경고"
+            zone_warning["message"] = f"침수 가능성 높음, 주의 필요"
+            if rain_status != "위험":
+                rain_status = "경고"
+        elif current_rain >= zone["threshold_rain"] * 0.5:
+            zone_warning["level"] = "🔔 주의"
+            zone_warning["message"] = f"강우량 증가 중, 모니터링 필요"
+            if rain_status not in ["위험", "경고"]:
+                rain_status = "주의"
+        else:
+            zone_warning["level"] = "✅ 정상"
+            zone_warning["message"] = "현재 침수 위험 없음"
+        
+        warnings.append(zone_warning)
+    
+    # 우선순위 1인 구간 중 위험/경고 상태 필터
+    priority1_alerts = [w for w in warnings if w["priority"] == 1 and w["level"] in ["🚨 위험", "⚠️ 경고"]]
+    
+    return {
+        "status": "success",
+        "timestamp": datetime.now().isoformat(),
+        "current_rain_mm": current_rain,
+        "overall_status": rain_status,
+        "total_zones": len(warnings),
+        "alert_zones": len([w for w in warnings if w["level"] != "✅ 정상"]),
+        "priority1_alerts": len(priority1_alerts),
+        "warnings": warnings,
+        "message": f"현재 강우량 {current_rain}mm - " + (
+            "🚨 침수 위험 구간 발생! 우회 권장" if rain_status == "위험" else
+            "⚠️ 일부 구간 침수 경고" if rain_status == "경고" else
+            "🔔 강우량 증가 중, 모니터링 필요" if rain_status == "주의" else
+            "✅ 전 구간 정상"
+        )
+    }
+
+# ============================================
 #  ITS CCTV 이미지 프록시
 # ============================================
 @app.get("/api/cctv-image")
