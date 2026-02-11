@@ -388,12 +388,11 @@ function loadCCTV(){
                 var ic=L.divIcon({className:'',html:'<div style="width:14px;height:14px;background:#facc15;border:2px solid #fff;border-radius:3px;box-shadow:0 2px 6px rgba(0,0,0,.5);font-size:8px;display:flex;align-items:center;justify-content:center;">📹</div>',iconSize:[14,14],iconAnchor:[7,7]});
                 var videoHtml='';
                 if(c.cctvurl){
-                    // 프록시를 통해 이미지 로드
-                    var proxyUrl=API_BASE+'/api/cctv-image?url='+encodeURIComponent(c.cctvurl);
-                    videoHtml='<div style="margin-top:8px;"><img id="cctv-img-'+lat+'" src="'+proxyUrl+'" style="width:100%;max-width:280px;border-radius:6px;border:1px solid #333;" onerror="this.outerHTML=\'<div style=padding:8px;background:rgba(245,158,11,.1);border-radius:4px;font-size:9px;color:#f59e0b;>⚠️ 영상 로드 실패</div>\'"/><div style="margin-top:4px;text-align:center;"><button onclick="refreshCCTV(this,\''+proxyUrl+'\')" style="padding:4px 8px;background:#f0b429;border:none;border-radius:4px;color:#000;font-size:9px;font-weight:700;cursor:pointer;">🔄 새로고침</button></div></div>';
+                    // 영상 보기 버튼 (새 탭에서 열기)
+                    videoHtml='<div style="margin-top:10px;text-align:center;"><a href="'+c.cctvurl+'" target="_blank" style="display:inline-block;padding:8px 16px;background:linear-gradient(135deg,#f0b429,#e09000);color:#000;font-size:11px;font-weight:700;border-radius:6px;text-decoration:none;box-shadow:0 2px 8px rgba(240,180,41,.4);">🎬 실시간 영상 보기</a></div>';
                 }
-                var popup='<div style="font-size:12px;font-weight:900;color:#facc15;margin-bottom:4px;">📹 '+(c.cctvname||'CCTV')+'</div><div style="font-size:9px;color:#888;">'+lat.toFixed(4)+', '+lng.toFixed(4)+'</div>'+videoHtml;
-                cctvLayer.addLayer(L.marker([lat,lng],{icon:ic}).bindPopup(popup,{maxWidth:320,minWidth:200}));
+                var popup='<div style="font-size:13px;font-weight:900;color:#facc15;margin-bottom:6px;">📹 '+(c.cctvname||'CCTV')+'</div><div style="font-size:10px;color:#888;margin-bottom:4px;">'+lat.toFixed(4)+', '+lng.toFixed(4)+'</div>'+videoHtml;
+                cctvLayer.addLayer(L.marker([lat,lng],{icon:ic}).bindPopup(popup,{maxWidth:280,minWidth:180}));
             });
             console.log('CCTV markers added:', items.length);
         }else{
@@ -403,10 +402,6 @@ function loadCCTV(){
         console.error('ITS API error:',e);
         loadCCTVSample();
     });
-}
-function refreshCCTV(btn,url){
-    var img=btn.parentElement.previousElementSibling;
-    img.src=url+'&t='+Date.now();
 }
 function loadCCTVSample(){
     var samples=[
@@ -419,7 +414,7 @@ function loadCCTVSample(){
     document.getElementById('cctvCnt').textContent=samples.length;
     samples.forEach(function(c){
         var ic=L.divIcon({className:'',html:'<div style="width:14px;height:14px;background:#facc15;border:2px solid #fff;border-radius:3px;box-shadow:0 2px 6px rgba(0,0,0,.5);font-size:8px;display:flex;align-items:center;justify-content:center;">📹</div>',iconSize:[14,14],iconAnchor:[7,7]});
-        var popup='<div style="font-size:12px;font-weight:900;color:#facc15;margin-bottom:4px;">📹 '+c.name+'</div><div style="font-size:9px;color:#888;">'+c.lat.toFixed(4)+', '+c.lng.toFixed(4)+'</div><div style="font-size:9px;color:#666;margin-top:4px;">샘플 데이터</div>';
+        var popup='<div style="font-size:13px;font-weight:900;color:#facc15;margin-bottom:6px;">📹 '+c.name+'</div><div style="font-size:10px;color:#888;">'+c.lat.toFixed(4)+', '+c.lng.toFixed(4)+'</div><div style="font-size:9px;color:#666;margin-top:6px;padding:6px;background:rgba(255,255,255,.05);border-radius:4px;">샘플 데이터 (API 키 없음)</div>';
         cctvLayer.addLayer(L.marker([c.lat,c.lng],{icon:ic}).bindPopup(popup,{maxWidth:200}));
     });
 }
