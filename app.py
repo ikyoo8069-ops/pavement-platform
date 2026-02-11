@@ -168,6 +168,22 @@ async def get_realtime_traffic(start_idx: int = 1, end_idx: int = 100):
         {"road_name":"강남대로","speed":18,"status":"정체"},{"road_name":"내부순환로","speed":42,"status":"서행"},{"road_name":"강변북로","speed":65,"status":"원활"}]}
 
 # ============================================
+#  ITS CCTV 이미지 프록시
+# ============================================
+@app.get("/api/cctv-image")
+async def get_cctv_image(url: str):
+    """CCTV 이미지 프록시 - CORS 우회"""
+    try:
+        async with httpx.AsyncClient(timeout=10.0, verify=False) as c:
+            r = await c.get(url, headers={"User-Agent": "Mozilla/5.0", "Referer": "http://www.its.go.kr/"})
+            if r.status_code == 200:
+                from fastapi.responses import Response
+                return Response(content=r.content, media_type=r.headers.get("content-type", "image/jpeg"))
+            return JSONResponse(status_code=r.status_code, content={"error": "Failed to fetch image"})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
+# ============================================
 #  ITS CCTV
 # ============================================
 @app.get("/api/cctv")
