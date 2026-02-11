@@ -373,14 +373,19 @@ function closeAI(){document.getElementById('aiP').classList.remove('show');}
 // ===== CCTV =====
 var cctvLayer=L.layerGroup().addTo(map),cctvVisible=true;
 function loadCCTV(){
-    fetch(API_BASE+'/api/cctv?lat=37.5665&lng=126.978&radius=0.15').then(function(r){return r.json();}).then(function(d){
-        var items=d.data||[];document.getElementById('cctvCnt').textContent=items.length;
-        items.forEach(function(c){if(!c.lat||!c.lng)return;
-            var ic=L.divIcon({className:'',html:'<div style="width:12px;height:12px;background:#facc15;border:2px solid #fff;border-radius:3px;box-shadow:0 1px 4px rgba(0,0,0,.4);font-size:7px;display:flex;align-items:center;justify-content:center;">📹</div>',iconSize:[12,12],iconAnchor:[6,6]});
-            var popup='<div style="font-size:12px;font-weight:900;color:#facc15;margin-bottom:4px;">📹 '+c.name+'</div><div style="font-size:9px;color:#888;">'+c.lat.toFixed(4)+', '+c.lng.toFixed(4)+'</div>';
-            cctvLayer.addLayer(L.marker([c.lat,c.lng],{icon:ic}).bindPopup(popup,{maxWidth:200}));
+    fetch(API_BASE+'/api/cctv?lat=37.5665&lng=126.978&radius=0.2').then(function(r){return r.json();}).then(function(d){
+        console.log('CCTV data:', d);
+        var items=d.data||[];
+        document.getElementById('cctvCnt').textContent=items.length;
+        cctvLayer.clearLayers();
+        items.forEach(function(c){
+            if(!c.lat||!c.lng||c.lat===0||c.lng===0)return;
+            var ic=L.divIcon({className:'',html:'<div style="width:14px;height:14px;background:#facc15;border:2px solid #fff;border-radius:3px;box-shadow:0 2px 6px rgba(0,0,0,.5);font-size:8px;display:flex;align-items:center;justify-content:center;">📹</div>',iconSize:[14,14],iconAnchor:[7,7]});
+            var popup='<div style="font-size:12px;font-weight:900;color:#facc15;margin-bottom:4px;">📹 '+c.name+'</div><div style="font-size:9px;color:#888;">'+Number(c.lat).toFixed(4)+', '+Number(c.lng).toFixed(4)+'</div>';
+            cctvLayer.addLayer(L.marker([Number(c.lat),Number(c.lng)],{icon:ic}).bindPopup(popup,{maxWidth:200}));
         });
-    }).catch(function(){document.getElementById('cctvCnt').textContent='–';});
+        console.log('CCTV markers added:', cctvLayer.getLayers().length);
+    }).catch(function(e){console.error('CCTV error:',e);document.getElementById('cctvCnt').textContent='–';});
 }
 function togCCTV(el){cctvVisible=!cctvVisible;el.classList.toggle('on',cctvVisible);el.querySelector('.dot').style.background=cctvVisible?'#facc15':'#333';if(cctvVisible)map.addLayer(cctvLayer);else map.removeLayer(cctvLayer);}
 
