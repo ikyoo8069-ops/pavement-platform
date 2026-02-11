@@ -388,7 +388,9 @@ function loadCCTV(){
                 var ic=L.divIcon({className:'',html:'<div style="width:14px;height:14px;background:#facc15;border:2px solid #fff;border-radius:3px;box-shadow:0 2px 6px rgba(0,0,0,.5);font-size:8px;display:flex;align-items:center;justify-content:center;">📹</div>',iconSize:[14,14],iconAnchor:[7,7]});
                 var videoHtml='';
                 if(c.cctvurl){
-                    videoHtml='<div style="margin-top:8px;"><img src="'+c.cctvurl+'" style="width:100%;max-width:280px;border-radius:6px;border:1px solid #333;" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'block\'"/><div style="display:none;font-size:9px;color:#f59e0b;padding:8px;background:rgba(245,158,11,.1);border-radius:4px;">⚠️ 영상 로드 실패 (CORS 제한)</div></div>';
+                    // 프록시를 통해 이미지 로드
+                    var proxyUrl=API_BASE+'/api/cctv-image?url='+encodeURIComponent(c.cctvurl);
+                    videoHtml='<div style="margin-top:8px;"><img id="cctv-img-'+lat+'" src="'+proxyUrl+'" style="width:100%;max-width:280px;border-radius:6px;border:1px solid #333;" onerror="this.outerHTML=\'<div style=padding:8px;background:rgba(245,158,11,.1);border-radius:4px;font-size:9px;color:#f59e0b;>⚠️ 영상 로드 실패</div>\'"/><div style="margin-top:4px;text-align:center;"><button onclick="refreshCCTV(this,\''+proxyUrl+'\')" style="padding:4px 8px;background:#f0b429;border:none;border-radius:4px;color:#000;font-size:9px;font-weight:700;cursor:pointer;">🔄 새로고침</button></div></div>';
                 }
                 var popup='<div style="font-size:12px;font-weight:900;color:#facc15;margin-bottom:4px;">📹 '+(c.cctvname||'CCTV')+'</div><div style="font-size:9px;color:#888;">'+lat.toFixed(4)+', '+lng.toFixed(4)+'</div>'+videoHtml;
                 cctvLayer.addLayer(L.marker([lat,lng],{icon:ic}).bindPopup(popup,{maxWidth:320,minWidth:200}));
@@ -401,6 +403,10 @@ function loadCCTV(){
         console.error('ITS API error:',e);
         loadCCTVSample();
     });
+}
+function refreshCCTV(btn,url){
+    var img=btn.parentElement.previousElementSibling;
+    img.src=url+'&t='+Date.now();
 }
 function loadCCTVSample(){
     var samples=[
