@@ -144,28 +144,67 @@ async def get_accident(region_code: str, year: str = "2024"):
         "top_accident_spots":[{"name":"남산순환로","count":8},{"name":"한남IC","count":9},{"name":"동작대교램프","count":7}]}}
 
 # ============================================
-#  TOPIS 서울시 실시간 교통 (열린데이터광장)
+#  TOPIS 서울시 실시간 교통 (열린데이터광장 citydata API)
 # ============================================
 @app.get("/api/traffic/realtime")
 async def get_realtime_traffic(start_idx: int = 1, end_idx: int = 100):
-    """서울시 실시간 도로 소통 정보"""
+    """서울시 실시간 도로 교통 정보 (citydata API)"""
+    import urllib.parse
+    
     if SEOUL_DATA_KEY:
         try:
-            async with httpx.AsyncClient(timeout=30.0) as c:
-                r = await c.get(f"http://openapi.seoul.go.kr:8088/{SEOUL_DATA_KEY}/json/TrafficInfo/{start_idx}/{end_idx}/")
-                data = r.json()
-                items = []
-                try:
-                    for item in data.get("TrafficInfo",{}).get("row",[]):
-                        items.append({"road_name":item.get("road_nm",""),"direction":item.get("road_nm_dir",""),"speed":item.get("spd",0),
-                            "travel_time":item.get("travel_time",0),"start_name":item.get("start_nd_nm",""),"end_name":item.get("end_nd_nm","")})
-                except: pass
-                return {"status":"live","timestamp":datetime.now().isoformat(),"count":len(items),"data":items}
+            # 주요 지역 교통 정보 조회
+            areas = ["강남역", "서울역", "홍대입구역"]
+            all_traffic = []
+            
+            async with httpx.AsyncClient(timeout=15.0) as c:
+                for area in areas:
+                    try:
+                        encoded_area = urllib.parse.quote(area)
+                        url = f"http://openapi.seoul.go.kr:8088/{SEOUL_DATA_KEY}/json/citydata/1/5/{encoded_area}/"
+                        r = await c.get(url)
+                        if r.status_code == 200:
+                            data = r.json()
+                            citydata = data.get("CITYDATA", {})
+                            traffic_stts = citydata.get("ROAD_TRAFFIC_STTS", {})
+                            road_list = traffic_stts.get("ROAD_TRAFFIC_STTS", [])
+                            
+                            if isinstance(road_list, list):
+                                for road in road_list[:2]:  # 각 지역 상위 2개 도로
+                                    spd = road.get("SPD", "0")
+                                    road_nm = road.get("ROAD_NM", "")
+                                    
+                                    # 속도에 따른 상태 결정
+                                    speed = float(spd) if spd else 0
+                                    if speed >= 40:
+                                        status = "원활"
+                                    elif speed >= 20:
+                                        status = "서행"
+                                    else:
+                                        status = "정체"
+                                    
+                                    if road_nm:
+                                        all_traffic.append({
+                                            "road_name": f"{area} {road_nm}",
+                                            "speed": speed,
+                                            "status": status
+                                        })
+                    except Exception as e:
+                        print(f"Traffic API error for {area}: {e}")
+                        continue
+            
+            if all_traffic:
+                return {"status": "live", "source": "citydata", "timestamp": datetime.now().isoformat(), "data": all_traffic}
         except Exception as e:
-            return {"status":"error","message":str(e)}
-    return {"status":"sample","data":[
-        {"road_name":"남산순환로","speed":25,"status":"정체"},{"road_name":"올림픽대로","speed":55,"status":"서행"},
-        {"road_name":"강남대로","speed":18,"status":"정체"},{"road_name":"내부순환로","speed":42,"status":"서행"},{"road_name":"강변북로","speed":65,"status":"원활"}]}
+            print(f"Traffic API error: {e}")
+    
+    # 폴백 샘플 데이터
+    return {"status": "sample", "data": [
+        {"road_name": "강남역 강남대로", "speed": 25, "status": "서행"},
+        {"road_name": "강남역 테헤란로", "speed": 35, "status": "서행"},
+        {"road_name": "서울역 세종대로", "speed": 42, "status": "원활"},
+        {"road_name": "홍대입구역 양화로", "speed": 18, "status": "정체"},
+    ]}
 
 # ============================================
 #  침수 사전 경보 시스템
